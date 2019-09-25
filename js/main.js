@@ -64,7 +64,7 @@ for (var i = 0; i < QUANTITY_PHOTOS; i++) {
   var commentLength = 0; // создаем переменную, которая будет хранить в себе длину объекта с комментами
 
   for (var j = 0; j < 2; j++) {
-    pictures[i]['comments'][j] = {};
+    pictures[i]['comments'][j] = [];
     pictures[i]['comments'][j]['text'] = COMMENTS[j];
     pictures[i]['comments'][j]['avatar'] = AVATARS[j];
     pictures[i]['comments'][j]['name'] = NAMES[j];
@@ -110,17 +110,13 @@ var bigPic = document.querySelector('.big-picture');
 bigPic.classList.remove('hidden');
 
 // Устанавливаем атрибут src из первого элемента массива с картинками
-var bigPicUrl = document.querySelector('.big-picture__img img');
-bigPicUrl.setAttribute('src', 'photos/' + pictures[0]['url'] + '.jpg');
+document.querySelector('.big-picture__img img').setAttribute('src', 'photos/' + pictures[0]['url'] + '.jpg');
 // Выводим количество лайков из первого элемента массива с картинками
-var bigPicLikesQount = document.querySelector('.big-picture .likes-count');
-bigPicLikesQount.textContent = pictures[0]['likes'];
+document.querySelector('.big-picture .likes-count').textContent = pictures[0]['likes'];
 // Выводим описание фотографии из первого элемента массива с картинками
-var bigPicDescription = document.querySelector('.big-picture .social__caption');
-bigPicDescription.textContent = pictures[0]['description'];
+document.querySelector('.big-picture .social__caption').textContent = pictures[0]['description'];
 // Выводим количество комментариев из первого элемента массива с картинками
-var bigPicCommentsQount = document.querySelector('.big-picture .comments-count');
-bigPicCommentsQount.textContent = commentLength;
+document.querySelector('.big-picture .comments-count').textContent = commentLength;
 // Обращаемся к блоку с комментариями
 var bigPicComments = document.querySelector('.big-picture .social__comments');
 // Обращаемся к шаблону комментария
@@ -136,10 +132,9 @@ var bigPicCommentTemplate = document.querySelector('.big-picture .social__commen
 var renderComments = function (comment) {
   var commentElement = bigPicCommentTemplate.cloneNode(true);
 
-  // ЗДЕСЬ ВОЗНИКАЮТ ОШИБКИ, КОНСОЛЬ ПОКАЗЫВАЕТ, ЧТО НЕ МОЖЕТ ПРОЧИТАТЬ СВОЙСТВА
-  commentElement.querySelector('.big-picture__social .social__comment .social__picture').setAttribute('src', comment['avatar']);
-  commentElement.querySelector('.big-picture__social .social__comment .social__picture').setAttribute('alt', comment['name']);
-  commentElement.querySelector('.big-picture__social .social__comment .social__text').textContent(comment['text']);
+  commentElement.querySelector('.social__picture').setAttribute('src', comment['avatar']);
+  commentElement.querySelector('.social__picture').setAttribute('alt', comment['name']);
+  commentElement.querySelector('.social__text').textContent = comment['text'];
 
   return commentElement;
 };
