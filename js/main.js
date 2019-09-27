@@ -106,8 +106,8 @@ photosBlock.appendChild(fragment);
 */
 
 // Обращаемся к блоку с большой картинкой и удаляем класс скрывающий его
-var bigPic = document.querySelector('.big-picture');
-bigPic.classList.remove('hidden');
+/*var bigPic = document.querySelector('.big-picture');*/
+/*bigPic.classList.remove('hidden');*/
 
 // Устанавливаем атрибут src из первого элемента массива с картинками
 document.querySelector('.big-picture__img img').setAttribute('src', 'photos/' + pictures[0]['url'] + '.jpg');
@@ -146,3 +146,119 @@ for (var a = 0; a < commentLength; a++) {
 
 // добавляем в блок с комментариями созданый фрагмент
 bigPicComments.appendChild(fragment);
+
+/*
+* MODULE 4 TASK 2
+*/
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
+
+var uploadBlockPic = document.querySelector('.img-upload__overlay');
+var uploadPicInput = document.querySelector('#upload-file');
+var uploadBlockClose = document.querySelector('#upload-cancel');
+var scalePlus = document.querySelector('.scale__control--bigger');
+var scaleMinus = document.querySelector('.scale__control--smaller');
+var scaleValue = document.querySelector('.scale__control--value');
+var previewPic = document.querySelector('.img-upload__preview img');
+var effectsBtns = document.querySelectorAll('.effects__radio');
+
+var onUploadPopupEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeUploadPopup();
+  }
+};
+
+var openUploadPopup = function () {
+  uploadBlockPic.classList.remove('hidden');
+  document.addEventListener('keydown', onUploadPopupEscPress);
+};
+
+var closeUploadPopup = function () {
+  uploadBlockPic.classList.add('hidden');
+  document.removeEventListener('keydown', onUploadPopupEscPress);
+};
+
+
+// отслеживание события на открытие онка
+uploadPicInput.addEventListener('change', function () {
+  openUploadPopup();
+});
+
+// закрытие окна
+uploadBlockClose.addEventListener('click', function () {
+  closeUploadPopup();
+});
+
+// закрытие окна по клаве
+uploadBlockClose.addEventListener('click', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closeUploadPopup();
+  }
+});
+
+// масштаб картинки
+var defaultScaleValue = 100;
+scaleValue.value = defaultScaleValue + '%';
+
+scalePlus.addEventListener('click', function () {
+
+  defaultScaleValue = defaultScaleValue + 25;
+  if (defaultScaleValue > 100) {
+    defaultScaleValue = 100;
+  }
+  scaleValue.value = defaultScaleValue + '%';
+
+  previewPic.style.transform = 'scale(' + defaultScaleValue/100 +')';
+});
+
+scaleMinus.addEventListener('click', function () {
+
+  defaultScaleValue = defaultScaleValue - 25;
+  if (defaultScaleValue < 25) {
+    defaultScaleValue = 25;
+  }
+  scaleValue.value = defaultScaleValue + '%';
+
+  previewPic.style.transform = 'scale(' + defaultScaleValue/100 +')';
+});
+
+
+// применение эффектов
+
+for (var i = 0; i < effectsBtns.length; i++) {
+  effectsBtns[i].addEventListener('click', function (evt) {
+    var effectBtnId = evt.target.getAttribute('id');
+    previewPic.removeAttribute('class');
+    if (effectBtnId === 'effect-none') {
+      previewPic.removeAttribute('class');
+    } else if (effectBtnId === 'effect-chrome') {
+      previewPic.classList.add('effects__preview--chrome');
+    } else if (effectBtnId === 'effect-sepia') {
+      previewPic.classList.add('effects__preview--sepia');
+    } else if (effectBtnId === 'effect-marvin') {
+      previewPic.classList.add('effects__preview--marvin');
+    } else if (effectBtnId === 'effect-phobos') {
+      previewPic.classList.add('effects__preview--phobos');
+    } else if (effectBtnId === 'effect-heat') {
+      previewPic.classList.add('effects__preview--heat');
+    }
+  })
+};
+
+// валидация хэштегов
+var hashtagsInput = document.querySelector('.text__hashtags');
+
+hashtagsInput.addEventListener('change', function (evt) {
+
+  var arrHashtags = hashtagsInput.value.split(/[\s#]+/);
+  arrHashtags.splice(0, 1);
+  for (var i = 0; i < arrHashtags.length; i++) {
+    
+  }
+  console.log(arrHashtags);
+});
+
+
+
+
+
