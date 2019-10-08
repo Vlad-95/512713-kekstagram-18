@@ -14,13 +14,13 @@ var COMMENTS = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
-/*
-* Функция перемешивания массива
-*
-* @param arr - исходный массив
-*
-* @return arr - перемешанный массив
-*/
+/**
+ * Функция перемешивания массива
+ *
+ * @param arr - исходный массив
+ *
+ * @return arr - перемешанный массив
+ */
 var shuffleArr = function (arr) {
   for (var i = arr.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
@@ -72,13 +72,13 @@ for (var i = 0; i < QUANTITY_PHOTOS; i++) {
   }
 }
 
-/*
-* Функция возврщает сгенерированное фото
-*
-* @param photo - фото
-*
-* @return photoElement - сгенерированное фото
-*/
+/**
+ * Функция возврщает сгенерированное фото
+ *
+ * @param photo - фото
+ *
+ * @return photoElement - сгенерированное фото
+ */
 var renderPhoto = function (photo) {
   var photoElement = photosTemplate.cloneNode(true);
 
@@ -101,12 +101,12 @@ for (var k = 0; k < QUANTITY_PHOTOS; k++) {
 // добавляем в блок с фото созданый фрагмент
 photosBlock.appendChild(fragment);
 
-/*
-* MODULE 3 TASK 3
-*/
+/**
+ * MODULE 3 TASK 3
+ */
 
 // Обращаемся к блоку с большой картинкой и удаляем класс скрывающий его
-/*var bigPic = document.querySelector('.big-picture');*/
+var bigPic = document.querySelector('.big-picture');
 /*bigPic.classList.remove('hidden');*/
 
 // Устанавливаем атрибут src из первого элемента массива с картинками
@@ -122,13 +122,13 @@ var bigPicComments = document.querySelector('.big-picture .social__comments');
 // Обращаемся к шаблону комментария
 var bigPicCommentTemplate = document.querySelector('.big-picture .social__comment');
 
-/*
-* Функция возврщает сгенерированный комментарий
-*
-* @param comment - комментарий
-*
-* @return commentElement - генерированный комментарий
-*/
+/**
+ * Функция возврщает сгенерированный комментарий
+ *
+ * @param comment - комментарий
+ *
+ * @return commentElement - генерированный комментарий
+ */
 var renderComments = function (comment) {
   var commentElement = bigPicCommentTemplate.cloneNode(true);
 
@@ -147,32 +147,57 @@ for (var a = 0; a < commentLength; a++) {
 // добавляем в блок с комментариями созданый фрагмент
 bigPicComments.appendChild(fragment);
 
-/*
-* MODULE 4 TASK 2
-*/
+/**
+ * MODULE 4 TASK 2
+ */
 var ESC_KEYCODE = 27;
 var ENTER_KEYCODE = 13;
 
-var uploadBlockPic = document.querySelector('.img-upload__overlay');
-var uploadPicInput = document.querySelector('#upload-file');
-var uploadBlockClose = document.querySelector('#upload-cancel');
-var scalePlus = document.querySelector('.scale__control--bigger');
-var scaleMinus = document.querySelector('.scale__control--smaller');
-var scaleValue = document.querySelector('.scale__control--value');
-var previewPic = document.querySelector('.img-upload__preview img');
-var effectsBtns = document.querySelectorAll('.effects__radio');
+var uploadBlockPic = document.querySelector('.img-upload__overlay'); // блок редактирования картинки
+var uploadPicInput = document.querySelector('#upload-file'); // инпут загрузки файлов
+var uploadBlockClose = document.querySelector('#upload-cancel'); // инпут закрытия
+var previewPic = document.querySelector('.img-upload__preview img'); // загруженная картинка
+var scalePlus = document.querySelector('.scale__control--bigger'); // масштаб +
+var scaleMinus = document.querySelector('.scale__control--smaller'); // масштаб -
+var scaleValue = document.querySelector('.scale__control--value'); // значение масштаба
 
+var startCoordX; // координаты клика
+var effectBlock = document.querySelector('.img-upload__effect-level'); // родительский блок изменения насыщенности
+var effectLine = document.querySelector('.effect-level__line'); // линия насыщенности эффекта
+var effectPin = document.querySelector('.effect-level__pin'); // бегунок насыщенности
+var effectDepth = document.querySelector('.effect-level__depth'); // уровень насыщенности (линия до бегунка)
+var effectsBtns = document.querySelectorAll('.effects__radio'); // эффекты
+
+
+
+/**
+ * Функция нажатия на кнопку ESC
+ * @param evt - Объект Event
+ */
 var onUploadPopupEscPress = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
+  // проверка на клавишу esc и фокус в инпуте хэштегов
+  if (evt.keyCode === ESC_KEYCODE && document.activeElement !== hashtagsInput) {
     closeUploadPopup();
   }
 };
 
+/**
+ * Функция открытия окна загрузки/редактирования фото
+ */
 var openUploadPopup = function () {
   uploadBlockPic.classList.remove('hidden');
+  // удаляем все эффекты при открытии
+  previewPic.classList.add('effect-none');
+  // удаляем линию насыщенности
+  if (previewPic.classList.contains('effect-none')) {
+    effectBlock.style.display = 'none';
+  }
   document.addEventListener('keydown', onUploadPopupEscPress);
 };
 
+/**
+ * Функция закрытия окна загрузки/редактирования фото
+ */
 var closeUploadPopup = function () {
   uploadBlockPic.classList.add('hidden');
   document.removeEventListener('keydown', onUploadPopupEscPress);
@@ -227,38 +252,180 @@ scaleMinus.addEventListener('click', function () {
 
 for (var i = 0; i < effectsBtns.length; i++) {
   effectsBtns[i].addEventListener('click', function (evt) {
+    // получаем id элемента, по которому кликнули
     var effectBtnId = evt.target.getAttribute('id');
+    // возвращаем бегунок в начальное положение
+    effectPin.style.left = 0 + 'px';
+    effectDepth.style.width = 0 + 'px';
+    // при каждом клике удаляем все классы наа изображении
     previewPic.removeAttribute('class');
+
+    // присваиваем классы в соответствии с полученным id
     if (effectBtnId === 'effect-none') {
-      previewPic.removeAttribute('class');
+      previewPic.classList.add('effect-none');
+      previewPic.style.webkitFilter = 'none';
     } else if (effectBtnId === 'effect-chrome') {
       previewPic.classList.add('effects__preview--chrome');
+      previewPic.style.webkitFilter = 'grayscale(0)';
     } else if (effectBtnId === 'effect-sepia') {
       previewPic.classList.add('effects__preview--sepia');
+      previewPic.style.webkitFilter = 'sepia(0)';
     } else if (effectBtnId === 'effect-marvin') {
       previewPic.classList.add('effects__preview--marvin');
+      previewPic.style.webkitFilter = 'invert(0)';
     } else if (effectBtnId === 'effect-phobos') {
       previewPic.classList.add('effects__preview--phobos');
+      previewPic.style.webkitFilter = 'blur(0)';
     } else if (effectBtnId === 'effect-heat') {
       previewPic.classList.add('effects__preview--heat');
+      previewPic.style.webkitFilter = 'brightness(1)';
+    }
+
+    // удаляем линию насыщенности, если кликнули на "ОРИГИНАЛ"
+    if (previewPic.classList.contains('effect-none')) {
+      effectBlock.style.display = 'none';
+    } else {
+      effectBlock.style.display = 'block';
     }
   })
 };
 
-// валидация хэштегов
+/**
+ * Функция изменения насыщенности эффекта
+ * @param x - позиция по оси x
+ */
+var changeIntensiveFilter = function (x) {
+  var positionX = parseInt(x, 10); // переводим x в число
+  // делаем пропорции для каждого эффекта
+  var filtervalue = positionX / effectLine.offsetWidth; //0...1
+  var filtervalueMarvin = (positionX / effectLine.offsetWidth) * 100; //0...100%
+  var filterBlur = positionX / 100;
+  var filterBrightness = positionX / 100;
+  if (filterBrightness < 1) {
+    filterBrightness = 1;
+  }
+
+  // присваиваем полученные значения
+  if (previewPic.classList.contains('effects__preview--chrome')) {
+    previewPic.style.webkitFilter = 'grayscale(' + filtervalue + ')';
+  }
+  if (previewPic.classList.contains('effects__preview--sepia')) {
+    previewPic.style.webkitFilter = 'sepia(' + filtervalue + ')';
+  }
+  if (previewPic.classList.contains('effects__preview--marvin')) {
+    previewPic.style.webkitFilter = 'invert(' + filtervalueMarvin + '%' + ')';
+  }
+  if (previewPic.classList.contains('effects__preview--phobos')) {
+    previewPic.style.webkitFilter = 'blur(' + filterBlur + 'px' + ')';
+  }
+  if (previewPic.classList.contains('effects__preview--heat')) {
+    previewPic.style.webkitFilter = 'brightness(' + filterBrightness + ')';
+  }
+};
+
+/**
+ * Фунция перемещения бегунка
+ * @param moveEvt - объект Event
+ */
+var onMouseMove = function (moveEvt) {
+  moveEvt.preventDefault();
+  // разница координат
+  var shift = startCoordX - moveEvt.clientX;
+
+  // начальный координаты
+  startCoordX = moveEvt.clientX;
+
+  // позиционирование бегунка
+  var pinPositionX = effectPin.offsetLeft - shift;
+
+  // проверка на отрицательность и превышение максимального значения
+  if (pinPositionX < 0) {
+    pinPositionX = 0;
+  } else if (pinPositionX > effectLine.offsetWidth) {
+    pinPositionX = effectLine.offsetWidth;
+  }
+
+  // координаты записываем в стили left
+  changeIntensiveFilter(effectPin.style.left);
+  effectPin.style.left = pinPositionX + 'px';
+  effectDepth.style.width = pinPositionX + 'px';
+};
+
+/**
+ * Функция отжатия кнопки мыши
+ */
+var onMouseUp = function () {
+  // удаляем все обработчики
+  document.removeEventListener('mousemove', onMouseMove);
+  document.removeEventListener('mouseup', onMouseUp);
+};
+
+/**
+ * Функция нажатия кнопки мыши
+ */
+var onMouseDown = function (downEvt) {
+  downEvt.preventDefault();
+  startCoordX = downEvt.clientX;
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+};
+
+effectBlock.addEventListener('mousedown', onMouseDown);
+
+/**
+ * Метод проверки уникальности значений в массиве.
+ * @param {array} arr  Исходный массив.
+ */
+var isArrayUnique = function(arr) {
+  // Фильтруем, только уникальные значения.
+  var uniqueArray = arr.filter(function(item, pos) {
+    return arr.indexOf(item) == pos;
+  });
+
+  return arr.length == uniqueArray.length;
+};
+
+// Обращаемся к инпуту с хэштегами
 var hashtagsInput = document.querySelector('.text__hashtags');
 
+// Вешаем listener на изменение
 hashtagsInput.addEventListener('change', function (evt) {
+  var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
+  var maxHashtagLength = 20; // с учетом учета #
+  var minHashtagLength = 2; // с учетом учета #
+  var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; //регулярка на остутствие пробела;
+  var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
+  evt.target.setCustomValidity(''); // После каждого редактирования сбрасываем ошибку, считая что она исправлена, и выполняем проверку по новой.
 
-  var arrHashtags = hashtagsInput.value.split(/[\s#]+/);
-  arrHashtags.splice(0, 1);
-  for (var i = 0; i < arrHashtags.length; i++) {
-    
+  // создаем массив разделяя элементы по пробелу
+  var arrHashtags = evt.target.value.toLowerCase().split(regExpSpace);
+
+  // Проверка дубликатов
+  if (!isArrayUnique(arrHashtags)) {
+    evt.target.setCustomValidity('Хэштеги не должны повторяться.');
   }
-  console.log(arrHashtags);
+
+  // Проверка на содержание пробелов между хэштегами
+  if (evt.target.value.match(regExpEmptySpace)) {
+    evt.target.setCustomValidity('Хэштеги должны быть разделены пробелом');
+  }
+
+  // Проверка на максимальное количество хэштегов
+  if (arrHashtags.length > LIMIT_HASHTAGS) {
+    evt.target.setCustomValidity('Максимальное количество хэштегов 5');
+  }
+
+  for (var i = 0; i < arrHashtags.length; i++) {
+
+    if (arrHashtags[i].length > maxHashtagLength ) {
+      evt.target.setCustomValidity('Максимальное количество символов хэштега менее 20');
+    } else if (arrHashtags[i].length < minHashtagLength ) {
+      evt.target.setCustomValidity('Минимальное количество символов хэштега более 2');
+    } else if (arrHashtags[i][0] !== '#') {
+      evt.target.setCustomValidity('Хэштег должен начинаться с #');
+    }
+    console.log(arrHashtags[i]);
+  };
+
+  evt.target.reportValidity(); // генерирует проверку валидации, вызывая метод oninvalid в случае не прохождения валидации.
 });
-
-
-
-
-
