@@ -14,7 +14,7 @@ var COMMENTS = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
-/**
+/*
  * Функция перемешивания массива
  *
  * @param arr - исходный массив
@@ -72,7 +72,7 @@ for (var i = 0; i < QUANTITY_PHOTOS; i++) {
   }
 }
 
-/**
+/*
  * Функция возврщает сгенерированное фото
  *
  * @param photo - фото
@@ -106,8 +106,8 @@ photosBlock.appendChild(fragment);
  */
 
 // Обращаемся к блоку с большой картинкой и удаляем класс скрывающий его
-var bigPic = document.querySelector('.big-picture');
-/*bigPic.classList.remove('hidden');*/
+// var bigPic = document.querySelector('.big-picture');
+// bigPic.classList.remove('hidden');
 
 // Устанавливаем атрибут src из первого элемента массива с картинками
 document.querySelector('.big-picture__img img').setAttribute('src', 'photos/' + pictures[0]['url'] + '.jpg');
@@ -122,7 +122,7 @@ var bigPicComments = document.querySelector('.big-picture .social__comments');
 // Обращаемся к шаблону комментария
 var bigPicCommentTemplate = document.querySelector('.big-picture .social__comment');
 
-/**
+/*
  * Функция возврщает сгенерированный комментарий
  *
  * @param comment - комментарий
@@ -168,9 +168,7 @@ var effectPin = document.querySelector('.effect-level__pin'); // бегунок 
 var effectDepth = document.querySelector('.effect-level__depth'); // уровень насыщенности (линия до бегунка)
 var effectsBtns = document.querySelectorAll('.effects__radio'); // эффекты
 
-
-
-/**
+/*
  * Функция нажатия на кнопку ESC
  * @param evt - Объект Event
  */
@@ -181,7 +179,7 @@ var onUploadPopupEscPress = function (evt) {
   }
 };
 
-/**
+/*
  * Функция открытия окна загрузки/редактирования фото
  */
 var openUploadPopup = function () {
@@ -233,7 +231,7 @@ scalePlus.addEventListener('click', function () {
   }
   scaleValue.value = defaultScaleValue + '%';
 
-  previewPic.style.transform = 'scale(' + defaultScaleValue/100 +')';
+  previewPic.style.transform = 'scale(' + defaultScaleValue / 100 + ')';
 });
 
 scaleMinus.addEventListener('click', function () {
@@ -244,14 +242,14 @@ scaleMinus.addEventListener('click', function () {
   }
   scaleValue.value = defaultScaleValue + '%';
 
-  previewPic.style.transform = 'scale(' + defaultScaleValue/100 +')';
+  previewPic.style.transform = 'scale(' + defaultScaleValue / 100 + ')';
 });
 
 
 // применение эффектов
 
-for (var i = 0; i < effectsBtns.length; i++) {
-  effectsBtns[i].addEventListener('click', function (evt) {
+for (var b = 0; b < effectsBtns.length; b++) {
+  effectsBtns[b].addEventListener('click', function (evt) {
     // получаем id элемента, по которому кликнули
     var effectBtnId = evt.target.getAttribute('id');
     // возвращаем бегунок в начальное положение
@@ -287,18 +285,18 @@ for (var i = 0; i < effectsBtns.length; i++) {
     } else {
       effectBlock.style.display = 'block';
     }
-  })
-};
+  });
+}
 
-/**
+/*
  * Функция изменения насыщенности эффекта
  * @param x - позиция по оси x
  */
 var changeIntensiveFilter = function (x) {
   var positionX = parseInt(x, 10); // переводим x в число
   // делаем пропорции для каждого эффекта
-  var filtervalue = positionX / effectLine.offsetWidth; //0...1
-  var filtervalueMarvin = (positionX / effectLine.offsetWidth) * 100; //0...100%
+  var filtervalue = positionX / effectLine.offsetWidth; // 0...1
+  var filtervalueMarvin = (positionX / effectLine.offsetWidth) * 100; // 0...100%
   var filterBlur = positionX / 100;
   var filterBrightness = positionX / 100;
   if (filterBrightness < 1) {
@@ -323,7 +321,7 @@ var changeIntensiveFilter = function (x) {
   }
 };
 
-/**
+/*
  * Фунция перемещения бегунка
  * @param moveEvt - объект Event
  */
@@ -351,7 +349,7 @@ var onMouseMove = function (moveEvt) {
   effectDepth.style.width = pinPositionX + 'px';
 };
 
-/**
+/*
  * Функция отжатия кнопки мыши
  */
 var onMouseUp = function () {
@@ -360,7 +358,7 @@ var onMouseUp = function () {
   document.removeEventListener('mouseup', onMouseUp);
 };
 
-/**
+/*
  * Функция нажатия кнопки мыши
  */
 var onMouseDown = function (downEvt) {
@@ -372,17 +370,17 @@ var onMouseDown = function (downEvt) {
 
 effectBlock.addEventListener('mousedown', onMouseDown);
 
-/**
+/*
  * Метод проверки уникальности значений в массиве.
  * @param {array} arr  Исходный массив.
  */
-var isArrayUnique = function(arr) {
+var isArrayUnique = function (arr) {
   // Фильтруем, только уникальные значения.
-  var uniqueArray = arr.filter(function(item, pos) {
-    return arr.indexOf(item) == pos;
+  var uniqueArray = arr.filter(function (item, pos) {
+    return arr.indexOf(item) === pos;
   });
 
-  return arr.length == uniqueArray.length;
+  return arr.length === uniqueArray.length;
 };
 
 // Обращаемся к инпуту с хэштегами
@@ -393,7 +391,7 @@ hashtagsInput.addEventListener('change', function (evt) {
   var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
   var maxHashtagLength = 20; // с учетом учета #
   var minHashtagLength = 2; // с учетом учета #
-  var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; //регулярка на остутствие пробела;
+  var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
   var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
   evt.target.setCustomValidity(''); // После каждого редактирования сбрасываем ошибку, считая что она исправлена, и выполняем проверку по новой.
 
@@ -415,17 +413,16 @@ hashtagsInput.addEventListener('change', function (evt) {
     evt.target.setCustomValidity('Максимальное количество хэштегов 5');
   }
 
-  for (var i = 0; i < arrHashtags.length; i++) {
+  for (var c = 0; c < arrHashtags.length; c++) {
 
-    if (arrHashtags[i].length > maxHashtagLength ) {
+    if (arrHashtags[c].length > maxHashtagLength) {
       evt.target.setCustomValidity('Максимальное количество символов хэштега менее 20');
-    } else if (arrHashtags[i].length < minHashtagLength ) {
+    } else if (arrHashtags[c].length < minHashtagLength) {
       evt.target.setCustomValidity('Минимальное количество символов хэштега более 2');
-    } else if (arrHashtags[i][0] !== '#') {
+    } else if (arrHashtags[c][0] !== '#') {
       evt.target.setCustomValidity('Хэштег должен начинаться с #');
     }
-    console.log(arrHashtags[i]);
-  };
+  }
 
   evt.target.reportValidity(); // генерирует проверку валидации, вызывая метод oninvalid в случае не прохождения валидации.
 });
