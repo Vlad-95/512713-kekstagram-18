@@ -162,6 +162,7 @@ var scaleMinus = document.querySelector('.scale__control--smaller'); // масш
 var scaleValue = document.querySelector('.scale__control--value'); // значение масштаба
 
 var startCoordX; // координаты клика
+var effectLevelInput = document.querySelector('.effect-level__value'); // скрытый инпут, в котором отправляется значение
 var effectBlock = document.querySelector('.img-upload__effect-level'); // родительский блок изменения насыщенности
 var effectLine = document.querySelector('.effect-level__line'); // линия насыщенности эффекта
 var effectPin = document.querySelector('.effect-level__pin'); // бегунок насыщенности
@@ -186,6 +187,8 @@ var openUploadPopup = function () {
   uploadBlockPic.classList.remove('hidden');
   // удаляем все эффекты при открытии
   previewPic.classList.add('effect-none');
+  // обнуляем значение инпута эффекта при открытии
+  effectLevelInput.value = 0;
   // удаляем линию насыщенности
   if (previewPic.classList.contains('effect-none')) {
     effectBlock.style.display = 'none';
@@ -250,6 +253,8 @@ scaleMinus.addEventListener('click', function () {
 
 for (var b = 0; b < effectsBtns.length; b++) {
   effectsBtns[b].addEventListener('click', function (evt) {
+    // обнуляем инпут при каждом выборе эффекта
+    effectLevelInput.value = 0;
     // получаем id элемента, по которому кликнули
     var effectBtnId = evt.target.getAttribute('id');
     // возвращаем бегунок в начальное положение
@@ -302,6 +307,9 @@ var changeIntensiveFilter = function (x) {
   if (filterBrightness < 1) {
     filterBrightness = 1;
   }
+
+  // записываем value эффекта в скрытый инпут
+  effectLevelInput.value = Math.round((positionX / effectLine.offsetWidth) * 100);
 
   // присваиваем полученные значения
   if (previewPic.classList.contains('effects__preview--chrome')) {
@@ -387,7 +395,7 @@ var isArrayUnique = function (arr) {
 var hashtagsInput = document.querySelector('.text__hashtags');
 
 // Вешаем listener на изменение
-hashtagsInput.addEventListener('change', function (evt) {
+hashtagsInput.addEventListener('input', function (evt) {
   var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
   var maxHashtagLength = 20; // с учетом учета #
   var minHashtagLength = 2; // с учетом учета #
