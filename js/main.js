@@ -378,59 +378,116 @@ var onMouseDown = function (downEvt) {
 
 effectBlock.addEventListener('mousedown', onMouseDown);
 
+
+
+
+
+var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
+var MAX_HASHTAG_LENGTH  = 20; // с учетом учета #
+var MIN_HASHTAG_LENGTH = 2; // с учетом учета #
+var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
+var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
+
 /*
  * Метод проверки уникальности значений в массиве.
  * @param {array} arr  Исходный массив.
  */
 var isArrayUnique = function (arr) {
-  // Фильтруем, только уникальные значения.
-  var uniqueArray = arr.filter(function (item, pos) {
-    return arr.indexOf(item) === pos;
-  });
 
-  return arr.length === uniqueArray.length;
+  var myArray = arr.sort();
+
+  for (var i = 0; i < myArray.length; i++) {
+    if (myArray.indexOf(myArray[i]) !== myArray.lastIndexOf(myArray[i])) {
+      return true;
+    }
+  }
+
+  return false;
 };
+
+/*
+* Методы проверки количества символов
+* */
+var checkArrayItemMinLength = function (element) {
+  return element.length > MIN_HASHTAG_LENGTH;
+};
+
+var checkArrayItemMaxLength = function (element) {
+  return element.length < MAX_HASHTAG_LENGTH;
+};
+
+/*
+* Метод проверки обязательного символа #
+* */
+var checkHashSymbol = function (arr) {
+  return arr.some(function (item) {
+    return item[0] === '#';
+  })
+};
+
+
+/*
+* Метод проверки на наличие пробела между хештегами
+* */
+var checkSpaceSymbols = function (input, regExp) {
+
+  if (input.value.match(regExp)) {
+    return false;
+  }
+
+  return true
+};
+
+
+/*
+* Метод проверки количества хэштегов
+* */
+var checkArrayLength = function (arr) {
+  return arr.length <= LIMIT_HASHTAGS;
+};
+
 
 // Обращаемся к инпуту с хэштегами
 var hashtagsInput = document.querySelector('.text__hashtags');
 
 // Вешаем listener на изменение
 hashtagsInput.addEventListener('input', function (evt) {
-  var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
-  var maxHashtagLength = 20; // с учетом учета #
-  var minHashtagLength = 2; // с учетом учета #
-  var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
-  var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
-  evt.target.setCustomValidity(''); // После каждого редактирования сбрасываем ошибку, считая что она исправлена, и выполняем проверку по новой.
+  var target = evt.target;
+
+  target.setCustomValidity(''); // После каждого редактирования сбрасываем ошибку, считая что она исправлена, и выполняем проверку по новой.
 
   // создаем массив разделяя элементы по пробелу
-  var arrHashtags = evt.target.value.toLowerCase().split(regExpSpace);
+  var arrHashtags = target.value.toLowerCase().split(regExpSpace);
 
   // Проверка дубликатов
-  if (!isArrayUnique(arrHashtags)) {
-    evt.target.setCustomValidity('Хэштеги не должны повторяться.');
+  if (isArrayUnique(arrHashtags)) {
+    target.setCustomValidity('Хэштеги не должны повторяться.');
+  }
+
+  // Проверка на минимальное количество
+  if (!arrHashtags.some(checkArrayItemMinLength)) {
+    target.setCustomValidity('Минимальное количество символов хэштега более ' + MIN_HASHTAG_LENGTH);
+  }
+
+  // Проверка на максимальное количество
+  if (!arrHashtags.some(checkArrayItemMaxLength)) {
+    target.setCustomValidity('Минимальное количество символов хэштега менее ' + MAX_HASHTAG_LENGTH);
+  }
+
+  // Проверка на обязательный символ #
+  if (!checkHashSymbol(arrHashtags)) {
+    target.setCustomValidity('Хэштег должен начинаться с #');
   }
 
   // Проверка на содержание пробелов между хэштегами
-  if (evt.target.value.match(regExpEmptySpace)) {
-    evt.target.setCustomValidity('Хэштеги должны быть разделены пробелом');
+  if (!checkSpaceSymbols(target, regExpEmptySpace)) {
+    target.setCustomValidity('Хэштеги должны быть разделены пробелом');
   }
 
   // Проверка на максимальное количество хэштегов
-  if (arrHashtags.length > LIMIT_HASHTAGS) {
-    evt.target.setCustomValidity('Максимальное количество хэштегов 5');
+  if (!checkArrayLength(arrHashtags)) {
+    target.setCustomValidity('Максимальное количество хэштегов ' + LIMIT_HASHTAGS);
   }
 
-  for (var c = 0; c < arrHashtags.length; c++) {
-
-    if (arrHashtags[c].length > maxHashtagLength) {
-      evt.target.setCustomValidity('Максимальное количество символов хэштега менее 20');
-    } else if (arrHashtags[c].length < minHashtagLength) {
-      evt.target.setCustomValidity('Минимальное количество символов хэштега более 2');
-    } else if (arrHashtags[c][0] !== '#') {
-      evt.target.setCustomValidity('Хэштег должен начинаться с #');
-    }
-  }
-
-  evt.target.reportValidity(); // генерирует проверку валидации, вызывая метод oninvalid в случае не прохождения валидации.
+  target.reportValidity(); // генерирует проверку валидации, вызывая метод oninvalid в случае не прохождения валидации.
 });
