@@ -378,12 +378,8 @@ var onMouseDown = function (downEvt) {
 
 effectBlock.addEventListener('mousedown', onMouseDown);
 
-
-
-
-
 var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
-var MAX_HASHTAG_LENGTH  = 20; // с учетом учета #
+var MAX_HASHTAG_LENGTH = 20; // с учетом учета #
 var MIN_HASHTAG_LENGTH = 2; // с учетом учета #
 var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
 var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
@@ -396,8 +392,8 @@ var isArrayUnique = function (arr) {
 
   var myArray = arr.sort();
 
-  for (var i = 0; i < myArray.length; i++) {
-    if (myArray.indexOf(myArray[i]) !== myArray.lastIndexOf(myArray[i])) {
+  for (var c = 0; c < myArray.length; c++) {
+    if (myArray.indexOf(myArray[c]) !== myArray.lastIndexOf(myArray[c])) {
       return true;
     }
   }
@@ -407,6 +403,8 @@ var isArrayUnique = function (arr) {
 
 /*
 * Методы проверки количества символов
+*
+* @param element - элемент массива
 * */
 var checkArrayItemMinLength = function (element) {
   return element.length > MIN_HASHTAG_LENGTH;
@@ -418,34 +416,40 @@ var checkArrayItemMaxLength = function (element) {
 
 /*
 * Метод проверки обязательного символа #
-* */
+*
+* @param arr - массив
+* @param item - элемент массива
+*/
 var checkHashSymbol = function (arr) {
   return arr.some(function (item) {
     return item[0] === '#';
-  })
+  });
 };
 
 
 /*
 * Метод проверки на наличие пробела между хештегами
-* */
+*
+* @param input - инпут с хэштегами
+* @param regExp - регулярка
+*/
 var checkSpaceSymbols = function (input, regExp) {
 
   if (input.value.match(regExp)) {
     return false;
   }
 
-  return true
+  return true;
 };
-
 
 /*
 * Метод проверки количества хэштегов
-* */
+*
+* @param arr - массив
+*/
 var checkArrayLength = function (arr) {
   return arr.length <= LIMIT_HASHTAGS;
 };
-
 
 // Обращаемся к инпуту с хэштегами
 var hashtagsInput = document.querySelector('.text__hashtags');
