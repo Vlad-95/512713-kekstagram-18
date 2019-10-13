@@ -52,6 +52,7 @@ for (var i = 0; i < QUANTITY_PHOTOS; i++) {
   shuffleArr(COMMENTS);
   // для каждого элемента массива создаем объект
   pictures[i] = {};
+  pictures[i]['index'] = i;
   // в объект записываем свойста(имя, путь к картинке, описание, комментарии, количество лайков) и их значения
   pictures[i]['name'] = NAMES[i];
   pictures[i]['url'] = IMAGES[i];
@@ -87,65 +88,21 @@ var renderPhoto = function (photo) {
   photoElement.querySelector('.picture__likes').textContent = photo['likes'];
   photoElement.querySelector('.picture__comments').textContent = commentLength;
 
+  photoElement.setAttribute('data-index', photo['index']);
+
   return photoElement;
 };
 
 // создаем фрагмент
-var fragment = document.createDocumentFragment();
+var fragmentPhoto = document.createDocumentFragment();
 
 // в фрагмент записываем все сгенерированные фото
 for (var k = 0; k < QUANTITY_PHOTOS; k++) {
-  fragment.appendChild(renderPhoto(pictures[k]));
+  fragmentPhoto.appendChild(renderPhoto(pictures[k]));
 }
 
 // добавляем в блок с фото созданый фрагмент
-photosBlock.appendChild(fragment);
-
-/**
- * MODULE 3 TASK 3
- */
-
-// Обращаемся к блоку с большой картинкой и удаляем класс скрывающий его
-// var bigPic = document.querySelector('.big-picture');
-// bigPic.classList.remove('hidden');
-
-// Устанавливаем атрибут src из первого элемента массива с картинками
-document.querySelector('.big-picture__img img').setAttribute('src', 'photos/' + pictures[0]['url'] + '.jpg');
-// Выводим количество лайков из первого элемента массива с картинками
-document.querySelector('.big-picture .likes-count').textContent = pictures[0]['likes'];
-// Выводим описание фотографии из первого элемента массива с картинками
-document.querySelector('.big-picture .social__caption').textContent = pictures[0]['description'];
-// Выводим количество комментариев из первого элемента массива с картинками
-document.querySelector('.big-picture .comments-count').textContent = commentLength;
-// Обращаемся к блоку с комментариями
-var bigPicComments = document.querySelector('.big-picture .social__comments');
-// Обращаемся к шаблону комментария
-var bigPicCommentTemplate = document.querySelector('.big-picture .social__comment');
-
-/*
- * Функция возврщает сгенерированный комментарий
- *
- * @param comment - комментарий
- *
- * @return commentElement - генерированный комментарий
- */
-var renderComments = function (comment) {
-  var commentElement = bigPicCommentTemplate.cloneNode(true);
-
-  commentElement.querySelector('.social__picture').setAttribute('src', comment['avatar']);
-  commentElement.querySelector('.social__picture').setAttribute('alt', comment['name']);
-  commentElement.querySelector('.social__text').textContent = comment['text'];
-
-  return commentElement;
-};
-
-// в фрагмент записываем все сгенерированные комментарии
-for (var a = 0; a < commentLength; a++) {
-  fragment.appendChild(renderComments(pictures[0]['comments'][a]));
-}
-
-// добавляем в блок с комментариями созданый фрагмент
-bigPicComments.appendChild(fragment);
+photosBlock.appendChild(fragmentPhoto);
 
 /**
  * MODULE 4 TASK 2
@@ -383,6 +340,7 @@ var MAX_HASHTAG_LENGTH = 20; // с учетом учета #
 var MIN_HASHTAG_LENGTH = 2; // с учетом учета #
 var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
 var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
+var COMMENT_LENGTH = 140;
 
 /*
  * Метод проверки уникальности значений в массиве.
@@ -425,7 +383,6 @@ var checkHashSymbol = function (arr) {
     return item[0] === '#';
   });
 };
-
 
 /*
 * Метод проверки на наличие пробела между хештегами
@@ -495,3 +452,125 @@ hashtagsInput.addEventListener('input', function (evt) {
 
   target.reportValidity(); // генерирует проверку валидации, вызывая метод oninvalid в случае не прохождения валидации.
 });
+
+/* MODULE4-TASK3 */
+
+/*
+* Метод проверки длины комментария
+*/
+var checkCommentLength = function (comment) {
+  return comment.value.length < COMMENT_LENGTH;
+
+};
+
+// Обращаемся к инпуту с с комментариями
+var commentUploadInput = document.querySelector('.text__description');
+
+// Вешаем listener на изменение
+commentUploadInput.addEventListener('input', function (evt) {
+  var target = evt.target;
+
+  // Проверка на максимальную длину комментария
+  if (!checkCommentLength(commentUploadInput)) {
+    target.setCustomValidity('Максимальная длина комментария ' + COMMENT_LENGTH);
+  }
+
+  target.reportValidity(); // генерирует проверку валидации, вызывая метод oninvalid в случае не прохождения валидации.
+});
+
+var bigPic = document.querySelector('.big-picture');
+var bigPicClose = document.querySelector('.big-picture__cancel');
+var photoItems = document.querySelectorAll('.picture');
+var commentInput = document.querySelector('.social__footer-text');
+
+/*
+ * Функция нажатия на кнопку ESC
+ * @param evt - Объект Event
+ */
+var onPreviewEscPress = function (evt) {
+  // проверка на клавишу esc и фокус в инпуте хэштегов
+  if (evt.keyCode === ESC_KEYCODE && document.activeElement !== commentInput) {
+    closePreviewPopup();
+  }
+};
+
+/**
+ * Функция открытия окна просмотра фото
+ */
+var openPreviewPopup = function () {
+  bigPic.classList.remove('hidden');
+
+  document.addEventListener('keydown', onPreviewEscPress);
+};
+
+/**
+ * Функция закрытия окна просмотра фото
+ */
+var closePreviewPopup = function () {
+  bigPic.classList.add('hidden');
+  document.removeEventListener('keydown', onPreviewEscPress);
+};
+
+// закрытие окна просмотра
+bigPicClose.addEventListener('click', function () {
+  closePreviewPopup();
+});
+
+// закрытие окна просмотра по клаве
+bigPicClose.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_KEYCODE) {
+    closePreviewPopup();
+  }
+});
+
+// Обращаемся к блоку с комментариями
+var bigPicComments = document.querySelector('.big-picture .social__comments');
+// Обращаемся к шаблону комментария
+var bigPicCommentTemplate = document.querySelector('.big-picture .social__comment');
+
+/*
+   * Функция возврщает сгенерированный комментарий
+   *
+   * @param comment - комментарий
+   *
+   * @return commentElement - генерированный комментарий
+   */
+var renderComments = function (comment) {
+  var commentElement = bigPicCommentTemplate.cloneNode(true);
+
+  commentElement.querySelector('.social__picture').setAttribute('src', comment['avatar']);
+  commentElement.querySelector('.social__picture').setAttribute('alt', comment['name']);
+  commentElement.querySelector('.social__text').textContent = comment['text'];
+
+  return commentElement;
+};
+
+
+var clickHandler = function (evt) {
+  openPreviewPopup();
+  var clickedElement = evt.currentTarget;
+  var index = clickedElement.getAttribute('data-index');
+
+  // Устанавливаем атрибут src из первого элемента массива с картинками
+  document.querySelector('.big-picture__img img').setAttribute('src', 'photos/' + pictures[index]['url'] + '.jpg');
+  // Выводим количество лайков из первого элемента массива с картинками
+  document.querySelector('.big-picture .likes-count').textContent = pictures[index]['likes'];
+  // Выводим описание фотографии из первого элемента массива с картинками
+  document.querySelector('.big-picture .social__caption').textContent = pictures[index]['description'];
+
+  var fragmentComment = document.createDocumentFragment();
+
+  // в фрагмент записываем все сгенерированные комментарии
+  for (var a = 0; a < commentLength; a++) {
+    fragmentComment.appendChild(renderComments(pictures[index]['comments'][a]));
+  }
+
+  bigPicComments.innerHTML = '';
+
+  // добавляем в блок с комментариями созданый фрагмент
+  bigPicComments.appendChild(fragmentComment);
+};
+
+for (var n = 0; n < QUANTITY_PHOTOS; n++) {
+  photoItems[n].addEventListener('click', clickHandler);
+}
