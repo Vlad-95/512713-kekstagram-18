@@ -62,6 +62,7 @@
     return commentElement;
   };
 
+<<<<<<< HEAD
   var clickHandler = function (evt) {
     openPreviewPopup();
     var clickedElement = evt.target;
@@ -94,5 +95,4 @@
 
   // ловим клик на всем блоке с картинками
   window.util.photosBlock.addEventListener('click', clickHandler);
-
 })();

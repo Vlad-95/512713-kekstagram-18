@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-
   // обращаемся к шаблону фотографий
   var photosTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
@@ -65,7 +64,6 @@
   for (var k = 0; k < window.data.QUANTITY_PHOTOS; k++) {
     fragmentPhoto.appendChild(renderPhoto(window.util.pictures[k]));
   }
-
   // добавляем в блок с фото созданый фрагмент
   window.util.photosBlock.appendChild(fragmentPhoto);
 })();

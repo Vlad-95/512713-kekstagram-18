@@ -3,7 +3,6 @@
 window.util = (function () {
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
-
   // обращаемся к блоку с картинками
   var photosBlock = document.querySelector('.pictures');
   // Обращаемся к инпуту с хэштегами
