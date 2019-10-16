@@ -1,15 +1,18 @@
 'use strict';
 
 (function () {
+  // окно редактирования/загрузки
   var uploadBlockPic = document.querySelector('.img-upload__overlay'); // блок редактирования картинки
   var uploadPicInput = document.querySelector('#upload-file'); // инпут загрузки файлов
   var uploadBlockClose = document.querySelector('#upload-cancel'); // инпут закрытия
   var previewPic = document.querySelector('.img-upload__preview img'); // загруженная картинка
 
+  // масштаб
   var scalePlus = document.querySelector('.scale__control--bigger'); // масштаб +
   var scaleMinus = document.querySelector('.scale__control--smaller'); // масштаб -
   var scaleValue = document.querySelector('.scale__control--value'); // значение масштаба
 
+  // эффекты
   var startCoordX; // координаты клика
   var effectLevelInput = document.querySelector('.effect-level__value'); // скрытый инпут, в котором отправляется значение
   var effectBlock = document.querySelector('.img-upload__effect-level'); // родительский блок изменения насыщенности
@@ -18,12 +21,14 @@
   var effectDepth = document.querySelector('.effect-level__depth'); // уровень насыщенности (линия до бегунка)
   var effectsBtns = document.querySelectorAll('.effects__radio'); // эффекты
 
+  // хэштеги
   var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
   var MAX_HASHTAG_LENGTH = 20; // с учетом учета #
   var MIN_HASHTAG_LENGTH = 2; // с учетом учета #
   var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
   var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
 
+  // комментарии
   var COMMENT_LENGTH = 140; // Лимит символов в комментарии
 
   /*
