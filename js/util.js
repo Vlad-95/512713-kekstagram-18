@@ -13,6 +13,9 @@ window.util = (function () {
   var commentUploadInput = document.querySelector('.text__description');
   // Создаем пустой массив для всех картинок
   var picturesArr = [];
+  // обращаемся к шаблону Ошибки
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+
   return {
     isEscEvent: function (evt, action) {
       if (evt.keyCode === ESC_KEYCODE && document.activeElement !== hashtagsInput && document.activeElement !== commentPreviewInput && document.activeElement !== commentUploadInput) {
@@ -45,6 +48,7 @@ window.util = (function () {
     commentPreviewInput: commentPreviewInput,
     commentUploadInput: commentUploadInput,
     photosBlock: photosBlock,
-    picturesArr: picturesArr
+    picturesArr: picturesArr,
+    errorTemplate: errorTemplate
   };
 })();
