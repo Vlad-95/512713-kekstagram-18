@@ -57,7 +57,7 @@
 
     commentElement.querySelector('.social__picture').setAttribute('src', comment['avatar']);
     commentElement.querySelector('.social__picture').setAttribute('alt', comment['name']);
-    commentElement.querySelector('.social__text').textContent = comment['text'];
+    commentElement.querySelector('.social__text').textContent = comment['message'];
 
     return commentElement;
   };
@@ -69,18 +69,18 @@
     var index = clickedElement.parentNode.getAttribute('data-index');
 
     if (clickedElement.classList.contains('picture__img')) {
-      // Устанавливаем атрибут src из первого элемента массива с картинками
-      document.querySelector('.big-picture__img img').setAttribute('src', 'photos/' + window.util.pictures[index]['url'] + '.jpg');
-      // Выводим количество лайков из первого элемента массива с картинками
-      document.querySelector('.big-picture .likes-count').textContent = window.util.pictures[index]['likes'];
-      // Выводим описание фотографии из первого элемента массива с картинками
-      document.querySelector('.big-picture .social__caption').textContent = window.util.pictures[index]['description'];
+      // Устанавливаем атрибут src
+      document.querySelector('.big-picture__img img').setAttribute('src', window.util.picturesArr[index]['url']);
+      // Выводим количество лайков
+      document.querySelector('.big-picture .likes-count').textContent = window.util.picturesArr[index]['likes'];
+      // Выводим описание фотографии
+      document.querySelector('.big-picture .social__caption').textContent = window.util.picturesArr[index]['description'];
 
       var fragmentComment = document.createDocumentFragment();
 
       // в фрагмент записываем все сгенерированные комментарии
-      for (var a = 0; a < 2; a++) {
-        fragmentComment.appendChild(renderComments(window.util.pictures[index]['comments'][a]));
+      for (var a = 0; a < 5; a++) {
+        fragmentComment.appendChild(renderComments(window.util.picturesArr[index]['comments'][a]));
       }
 
       bigPicComments.innerHTML = '';

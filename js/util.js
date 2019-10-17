@@ -11,8 +11,8 @@ window.util = (function () {
   var commentPreviewInput = document.querySelector('.social__footer-text');
   // Обращаемся к инпуту с с комментариями (ЗАГРУЗКА ФОТО)
   var commentUploadInput = document.querySelector('.text__description');
-  // создаем пустой массив картинок
-  var pictures = [];
+  // Создаем пустой массив для всех картинок
+  var picturesArr = [];
   return {
     isEscEvent: function (evt, action) {
       if (evt.keyCode === ESC_KEYCODE && document.activeElement !== hashtagsInput && document.activeElement !== commentPreviewInput && document.activeElement !== commentUploadInput) {
@@ -44,7 +44,7 @@ window.util = (function () {
     hashtagsInput: hashtagsInput,
     commentPreviewInput: commentPreviewInput,
     commentUploadInput: commentUploadInput,
-    pictures: pictures,
-    photosBlock: photosBlock
+    photosBlock: photosBlock,
+    picturesArr: picturesArr
   };
 })();
