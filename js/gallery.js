@@ -27,7 +27,7 @@
   /*
   * Функция загрузки фотографий
   */
-  var successHandler = function(pictures) {
+  var successHandler = function (pictures) {
     // создаем фрагмент
     var fragmentPhoto = document.createDocumentFragment();
 
@@ -47,7 +47,8 @@
   /*
   * Функция вывода ошибок
   */
-  var errorHandler = function(errorMessage) {
+
+  var errorHandler = function (errorMessage) {
 
     // обращаемся к шаблону Ошибки
     var errorTemplate = document.querySelector('#error').content.querySelector('.error');
