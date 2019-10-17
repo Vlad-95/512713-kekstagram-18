@@ -118,24 +118,30 @@
       previewPic.removeAttribute('class');
 
       // присваиваем классы в соответствии с полученным id
-      if (effectBtnId === 'effect-none') {
-        previewPic.classList.add('effect-none');
-        previewPic.style.webkitFilter = 'none';
-      } else if (effectBtnId === 'effect-chrome') {
-        previewPic.classList.add('effects__preview--chrome');
-        previewPic.style.webkitFilter = 'grayscale(0)';
-      } else if (effectBtnId === 'effect-sepia') {
-        previewPic.classList.add('effects__preview--sepia');
-        previewPic.style.webkitFilter = 'sepia(0)';
-      } else if (effectBtnId === 'effect-marvin') {
-        previewPic.classList.add('effects__preview--marvin');
-        previewPic.style.webkitFilter = 'invert(0)';
-      } else if (effectBtnId === 'effect-phobos') {
-        previewPic.classList.add('effects__preview--phobos');
-        previewPic.style.webkitFilter = 'blur(0)';
-      } else if (effectBtnId === 'effect-heat') {
-        previewPic.classList.add('effects__preview--heat');
-        previewPic.style.webkitFilter = 'brightness(1)';
+      switch (effectBtnId) {
+        case 'effect-none':
+          previewPic.classList.add('effect-none');
+          previewPic.style.webkitFilter = 'none';
+          break;
+        case 'effect-chrome':
+          previewPic.classList.add('effects__preview--chrome');
+          previewPic.style.webkitFilter = 'grayscale(0)';
+          break;
+        case 'effect-sepia':
+          previewPic.classList.add('effects__preview--sepia');
+          previewPic.style.webkitFilter = 'sepia(0)';
+          break;
+        case 'effect-marvin':
+          previewPic.classList.add('effects__preview--marvin');
+          previewPic.style.webkitFilter = 'invert(0)';
+          break;
+        case 'effect-phobos':
+          previewPic.classList.add('effects__preview--phobos');
+          previewPic.style.webkitFilter = 'blur(0)';
+          break;
+        case 'effect-heat':
+          previewPic.classList.add('effects__preview--heat');
+          previewPic.style.webkitFilter = 'brightness(1)';
       }
 
       // удаляем линию насыщенности, если кликнули на "ОРИГИНАЛ"
@@ -167,20 +173,22 @@
     effectLevelInput.value = Math.round((positionX / effectLine.offsetWidth) * 100);
 
     // присваиваем полученные значения
-    if (previewPic.classList.contains('effects__preview--chrome')) {
-      previewPic.style.webkitFilter = 'grayscale(' + filtervalue + ')';
-    }
-    if (previewPic.classList.contains('effects__preview--sepia')) {
-      previewPic.style.webkitFilter = 'sepia(' + filtervalue + ')';
-    }
-    if (previewPic.classList.contains('effects__preview--marvin')) {
-      previewPic.style.webkitFilter = 'invert(' + filtervalueMarvin + '%' + ')';
-    }
-    if (previewPic.classList.contains('effects__preview--phobos')) {
-      previewPic.style.webkitFilter = 'blur(' + filterBlur + 'px' + ')';
-    }
-    if (previewPic.classList.contains('effects__preview--heat')) {
-      previewPic.style.webkitFilter = 'brightness(' + filterBrightness + ')';
+    switch (true) {
+      case previewPic.classList.contains('effects__preview--chrome'):
+        previewPic.style.webkitFilter = 'grayscale(' + filtervalue + ')';
+        break;
+      case previewPic.classList.contains('effects__preview--sepia'):
+        previewPic.style.webkitFilter = 'sepia(' + filtervalue + ')';
+        break;
+      case previewPic.classList.contains('effects__preview--marvin'):
+        previewPic.style.webkitFilter = 'invert(' + filtervalueMarvin + '%' + ')';
+        break;
+      case previewPic.classList.contains('effects__preview--phobos'):
+        previewPic.style.webkitFilter = 'blur(' + filterBlur + 'px' + ')';
+        break;
+      case previewPic.classList.contains('effects__preview--heat'):
+        previewPic.style.webkitFilter = 'brightness(' + filterBrightness + ')';
+        break;
     }
   };
 
@@ -299,6 +307,15 @@
     return arr.length <= LIMIT_HASHTAGS;
   };
 
+  /*
+  * Метод проверки длины комментария
+  */
+  var checkCommentLength = function (comment) {
+    return comment.value.length < COMMENT_LENGTH;
+
+  };
+
+
   // Вешаем listener на изменение
   window.util.hashtagsInput.addEventListener('input', function (evt) {
     var target = evt.target;
@@ -341,15 +358,7 @@
     target.reportValidity(); // генерирует проверку валидации, вызывая метод oninvalid в случае не прохождения валидации.
   });
 
-  /*
-  * Метод проверки длины комментария
-  */
-  var checkCommentLength = function (comment) {
-    return comment.value.length < COMMENT_LENGTH;
-
-  };
-
-  // Вешаем listener на изменение
+  // Вешаем listener на изменение инпута с комментариями
   window.util.commentUploadInput.addEventListener('input', function (evt) {
     var target = evt.target;
 
