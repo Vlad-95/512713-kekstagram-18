@@ -289,10 +289,8 @@
   * @param arr - массив
   * @param item - элемент массива
   */
-  var checkHashSymbol = function (arr) {
-    return arr.some(function (item) {
-      return item[0] === '#';
-    });
+  var checkHashSymbol = function (item) {
+    return item[0] === '#';
   };
 
   /*
@@ -341,17 +339,17 @@
     }
 
     // Проверка на минимальное количество
-    if (!arrHashtags.some(checkArrayItemMinLength)) {
+    if (!arrHashtags.every(checkArrayItemMinLength)) {
       target.setCustomValidity('Минимальное количество символов хэштега более ' + MIN_HASHTAG_LENGTH);
     }
 
     // Проверка на максимальное количество
-    if (!arrHashtags.some(checkArrayItemMaxLength)) {
+    if (!arrHashtags.every(checkArrayItemMaxLength)) {
       target.setCustomValidity('Минимальное количество символов хэштега менее ' + MAX_HASHTAG_LENGTH);
     }
 
     // Проверка на обязательный символ #
-    if (!checkHashSymbol(arrHashtags)) {
+    if (!arrHashtags.every(checkHashSymbol)) {
       target.setCustomValidity('Хэштег должен начинаться с #');
     }
 
