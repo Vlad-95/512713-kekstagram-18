@@ -31,8 +31,14 @@
   // комментарии
   var COMMENT_LENGTH = 140; // Лимит символов в комментарии
 
+  // обращаемся к форме отправки фотографий
+  var uploadForm = document.querySelector('.img-upload__form');
+  // обращаемся к шаблону успеха
+  var successTemplate = document.querySelector('#success').content.querySelector('.success');
+
+
   /*
-   * Функция нажатия на кнопку ESC
+   * Функция закрытия окна загрузки/редактирования фото, нажатием на кнопку ESC
    * @param evt - Объект Event
    */
   var onUploadPopupEscPress = function (evt) {
@@ -44,8 +50,13 @@
    */
   var openUploadPopup = function () {
     uploadBlockPic.classList.remove('hidden');
+    // устанавливаем значение масштаба 100%
+    scaleValue.setAttribute('value', 100 + '%');
+    // обнуляем масштаб самой картинки
+    previewPic.style.transform = 'scale(' + 1 + ')';
     // удаляем все эффекты при открытии
-    previewPic.classList.add('effect-none');
+    previewPic.setAttribute('class', 'effect-none');
+    previewPic.style.webkitFilter = 'none';
     // обнуляем значение инпута эффекта при открытии
     effectLevelInput.value = 0;
     // удаляем линию насыщенности
@@ -80,7 +91,8 @@
 
   // масштаб картинки
   var defaultScaleValue = 100;
-  scaleValue.value = defaultScaleValue + '%';
+  scaleValue.setAttribute('value', defaultScaleValue + '%');
+
 
   scalePlus.addEventListener('click', function () {
 
@@ -88,7 +100,7 @@
     if (defaultScaleValue > 100) {
       defaultScaleValue = 100;
     }
-    scaleValue.value = defaultScaleValue + '%';
+    scaleValue.setAttribute('value', defaultScaleValue + '%');
 
     previewPic.style.transform = 'scale(' + defaultScaleValue / 100 + ')';
   });
@@ -99,7 +111,7 @@
     if (defaultScaleValue < 25) {
       defaultScaleValue = 25;
     }
-    scaleValue.value = defaultScaleValue + '%';
+    scaleValue.setAttribute('value', defaultScaleValue + '%');
 
     previewPic.style.transform = 'scale(' + defaultScaleValue / 100 + ')';
   });
@@ -277,10 +289,8 @@
   * @param arr - массив
   * @param item - элемент массива
   */
-  var checkHashSymbol = function (arr) {
-    return arr.some(function (item) {
-      return item[0] === '#';
-    });
+  var checkHashSymbol = function (item) {
+    return item[0] === '#';
   };
 
   /*
@@ -312,11 +322,9 @@
   */
   var checkCommentLength = function (comment) {
     return comment.value.length < COMMENT_LENGTH;
-
   };
 
-
-  // Вешаем listener на изменение
+  // Вешаем listener на ввод
   window.util.hashtagsInput.addEventListener('input', function (evt) {
     var target = evt.target;
 
@@ -331,17 +339,17 @@
     }
 
     // Проверка на минимальное количество
-    if (!arrHashtags.some(checkArrayItemMinLength)) {
+    if (!arrHashtags.every(checkArrayItemMinLength)) {
       target.setCustomValidity('Минимальное количество символов хэштега более ' + MIN_HASHTAG_LENGTH);
     }
 
     // Проверка на максимальное количество
-    if (!arrHashtags.some(checkArrayItemMaxLength)) {
+    if (!arrHashtags.every(checkArrayItemMaxLength)) {
       target.setCustomValidity('Минимальное количество символов хэштега менее ' + MAX_HASHTAG_LENGTH);
     }
 
     // Проверка на обязательный символ #
-    if (!checkHashSymbol(arrHashtags)) {
+    if (!arrHashtags.every(checkHashSymbol)) {
       target.setCustomValidity('Хэштег должен начинаться с #');
     }
 
@@ -368,5 +376,85 @@
     }
 
     target.reportValidity(); // генерирует проверку валидации, вызывая метод oninvalid в случае не прохождения валидации.
+  });
+
+  /*
+   * Функция закрытия успеха, нажатием на кнопку ESC
+   * @param evt - Объект Event
+   */
+  var onUploadSuccessEscPress = function (evt) {
+    window.util.isEscEvent(evt, closeUploadSuccess);
+  };
+
+  /*
+   * Функция закрытия окна успешной отправки
+   */
+  var closeUploadSuccess = function () {
+    successTemplate.remove();
+    document.removeEventListener('keydown', onUploadSuccessEscPress);
+  };
+
+  // закрытие окна успешной отправки
+  successTemplate.addEventListener('click', function (evt) {
+    if (evt.target.classList.contains('success') || evt.target.classList.contains('success__button')) {
+      closeUploadSuccess();
+    }
+  });
+
+  /*
+   * Функция закрытия ошибки, нажатием на кнопку ESC
+   * @param evt - Объект Event
+   */
+  var onUploadErrorEscPress = function (evt) {
+    window.util.isEscEvent(evt, closeUploadError);
+  };
+
+  /*
+   * Функция закрытия окна ошибки
+   */
+  var closeUploadError = function () {
+    window.util.errorTemplate.remove();
+    document.removeEventListener('keydown', onUploadErrorEscPress);
+  };
+
+  // закрытие окна ошибки
+  window.util.errorTemplate.addEventListener('click', function (evt) {
+    if (evt.target.classList.contains('error') || evt.target.classList.contains('error__button')) {
+      closeUploadError();
+    }
+  });
+
+  /*
+  * Функция успешной загрузки
+  */
+  var successUploadHandler = function () {
+    uploadBlockPic.classList.add('hidden'); // прячем окно редактирования
+    uploadForm.reset(); // чистим форму
+
+    // показываем окно успеха
+    document.querySelector('main').insertAdjacentElement('afterbegin', successTemplate);
+
+    // добавляем обработчик на закрытие окна успешного отправления по ESC
+    document.addEventListener('keydown', onUploadSuccessEscPress);
+  };
+
+  /*
+  * Функция вывода ошибок
+  */
+  var errorUploadHandler = function () {
+    uploadBlockPic.classList.add('hidden'); // прячем окно редактирования
+    uploadForm.reset(); // чистим форму
+
+    // показываем окно ошибки
+    document.querySelector('main').insertAdjacentElement('afterbegin', window.util.errorTemplate);
+
+    // добавляем обработчик на закрытие окна ошибки по ESC
+    document.addEventListener('keydown', onUploadErrorEscPress);
+  };
+
+  // обработчик на отправку формы
+  uploadForm.addEventListener('submit', function (evt) {
+    window.upload(new FormData(uploadForm), successUploadHandler, errorUploadHandler);
+    evt.preventDefault();
   });
 })();

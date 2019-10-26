@@ -1,6 +1,29 @@
 'use strict';
 
 (function () {
+  /*
+   * Функция нажатия на кнопку ESC
+   * @param evt - Объект Event
+   */
+  var onGalleryErrorEscPress = function (evt) {
+    window.util.isEscEvent(evt, closeGalleryError);
+  };
+
+  /*
+   * Функция закрытия окна ошибки
+   */
+  var closeGalleryError = function () {
+    window.util.errorTemplate.remove();
+    document.removeEventListener('keydown', onGalleryErrorEscPress);
+  };
+
+  // закрытие окна ошибки
+  window.util.errorTemplate.addEventListener('click', function (evt) {
+    if (evt.target.classList.contains('error') || evt.target.classList.contains('error__button')) {
+      closeGalleryError();
+    }
+  });
+
   // обращаемся к шаблону фотографий
   var photosTemplate = document.querySelector('#picture').content.querySelector('.picture');
 
@@ -27,7 +50,7 @@
   /*
   * Функция загрузки фотографий
   */
-  var successHandler = function (pictures) {
+  var successLoadHandler = function (pictures) {
     // создаем фрагмент
     var fragmentPhoto = document.createDocumentFragment();
 
@@ -47,16 +70,12 @@
   /*
   * Функция вывода ошибок
   */
-  var errorHandler = function (errorMessage) {
-
-    // обращаемся к шаблону Ошибки
-    var errorTemplate = document.querySelector('#error').content.querySelector('.error');
-
-    errorTemplate.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', errorTemplate);
+  var errorLoadHandler = function () {
+    document.querySelector('main').insertAdjacentElement('afterbegin', window.util.errorTemplate);
+    document.addEventListener('keydown', onGalleryErrorEscPress);
   };
 
-  window.load(successHandler, errorHandler);
+  window.load(successLoadHandler, errorLoadHandler);
 
 
 })();
