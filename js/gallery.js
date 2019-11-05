@@ -47,9 +47,6 @@
     return photoElement;
   };
 
-
-
-
   window.renderGallery = function (data) {
     // в фрагмент записываем все сгенерированные фото
     for (var k = 0; k < data.length; k++) {
@@ -59,7 +56,6 @@
       window.util.photosBlock.appendChild(renderPhoto(data[k]));
     }
   };
-
 
   /*
   * Функция загрузки фотографий
@@ -85,11 +81,11 @@
   window.load(successLoadHandler, errorLoadHandler);
 
 
-  /*ФИЛЬТРАЦИЯ ИЗОБРАЖЕНИЙ*/
+  // ФИЛЬТРАЦИЯ ИЗОБРАЖЕНИЙ
   var filtersBtnsBlock = document.querySelector('.img-filters');
   var filterBtns = document.querySelectorAll('.img-filters__button');
 
-  //очистка галлереи
+  // очистка галлереи
   var cleanGallery = function () {
     var galleryItems = window.util.photosBlock.children;
 
@@ -99,10 +95,6 @@
       galleryItem.parentElement.removeChild(galleryItem);
     }
   };
-
-  /*console.log(window.util.picturesArr);*/
-  /*console.log(copyPicturesArr);*/
-
 
   var clickFilterBtns = function (evt) {
     var target = evt.target;
@@ -140,7 +132,7 @@
 
         break;
       case btnsId === 'filter-discussed':
-        console.log(3);
+
         break;
     }
   };

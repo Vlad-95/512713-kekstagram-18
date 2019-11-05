@@ -67,7 +67,7 @@
     var clickedElement = evt.target;
 
     var index = clickedElement.parentNode.getAttribute('data-index');
-    console.log(clickedElement);
+
     if (clickedElement.classList.contains('picture__img')) {
       // Устанавливаем атрибут src
       document.querySelector('.big-picture__img img').setAttribute('src', window.util.picturesArr[index]['url']);
