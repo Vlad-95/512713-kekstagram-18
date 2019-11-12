@@ -6,7 +6,6 @@
   var filtersBtnsBlock = document.querySelector('.img-filters'); // блок с кнопками фильтрации
   var filterBtns = document.querySelectorAll('.img-filters__button'); // кнопки фильтрации
 
-
   /*
   * Функция нажатия на кнопку ESC
   *
