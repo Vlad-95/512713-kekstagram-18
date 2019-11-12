@@ -20,6 +20,7 @@
   var effectPin = document.querySelector('.effect-level__pin'); // бегунок насыщенности
   var effectDepth = document.querySelector('.effect-level__depth'); // уровень насыщенности (линия до бегунка)
   var effectsBtns = document.querySelectorAll('.effects__radio'); // эффекты
+  var effectsPreview = document.querySelectorAll('.effects__preview'); // превьюшки эффектов
 
   // хэштеги
   var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
@@ -28,7 +29,7 @@
   var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
   var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
 
-  // комментарии
+  // длин комментария комментарии
   var COMMENT_LENGTH = 140; // Лимит символов в комментарии
 
   // обращаемся к форме отправки фотографий
@@ -38,16 +39,16 @@
 
 
   /*
-   * Функция закрытия окна загрузки/редактирования фото, нажатием на кнопку ESC
-   * @param evt - Объект Event
-   */
+  * Функция закрытия окна загрузки/редактирования фото, нажатием на кнопку ESC
+  * @param evt - Объект Event
+  */
   var onUploadPopupEscPress = function (evt) {
     window.util.isEscEvent(evt, closeUploadPopup);
   };
 
   /*
-   * Функция открытия окна загрузки/редактирования фото
-   */
+  * Функция открытия окна загрузки/редактирования фото
+  */
   var openUploadPopup = function () {
     uploadBlockPic.classList.remove('hidden');
     // устанавливаем значение масштаба 100%
@@ -59,44 +60,75 @@
     previewPic.style.webkitFilter = 'none';
     // обнуляем значение инпута эффекта при открытии
     effectLevelInput.value = 0;
+
+    // показываем загруженную фотку
+    var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png']; // формат загруженых файлов
+
+    var file = uploadPicInput.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    // проверка на правильность формата файла
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        // выводим загруженную фотку
+        previewPic.src = reader.result;
+
+        // выводим загруженную фотку для превью эффектов
+        for (var n = 0; n < effectsPreview.length; n++) {
+          effectsPreview[n].style.backgroundImage = 'url(' + reader.result + ')';
+        }
+      });
+
+      reader.readAsDataURL(file);
+    }
+
     // удаляем линию насыщенности
     if (previewPic.classList.contains('effect-none')) {
       effectBlock.style.display = 'none';
     }
+
+    // добавляем листенер на закрытие окна по клавиатуре
     document.addEventListener('keydown', onUploadPopupEscPress);
   };
 
   /*
-   * Функция закрытия окна загрузки/редактирования фото
-   */
+  * Функция закрытия окна загрузки/редактирования фото
+  */
   var closeUploadPopup = function () {
     uploadBlockPic.classList.add('hidden');
     document.removeEventListener('keydown', onUploadPopupEscPress);
   };
 
-  // отслеживание события на открытие онка
+  // отслеживание события на открытие окна загрузки/редактирования фото
   uploadPicInput.addEventListener('change', function () {
     openUploadPopup();
   });
 
-  // закрытие окна
+  // закрытие окна загрузки/редактирования фото
   uploadBlockClose.addEventListener('click', function () {
     closeUploadPopup();
   });
 
-  // закрытие окна по клаве
+  // закрытие окна по клаве загрузки/редактирования фото
   uploadBlockClose.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, closeUploadPopup);
   });
 
   // масштаб картинки
   var defaultScaleValue = 100;
+  var scaleStep = 25;
   scaleValue.setAttribute('value', defaultScaleValue + '%');
 
-
+  // вешаем листенер на клик по кнопкам изменения масштаба
   scalePlus.addEventListener('click', function () {
 
-    defaultScaleValue = defaultScaleValue + 25;
+    defaultScaleValue = defaultScaleValue + scaleStep;
     if (defaultScaleValue > 100) {
       defaultScaleValue = 100;
     }
@@ -107,9 +139,9 @@
 
   scaleMinus.addEventListener('click', function () {
 
-    defaultScaleValue = defaultScaleValue - 25;
-    if (defaultScaleValue < 25) {
-      defaultScaleValue = 25;
+    defaultScaleValue = defaultScaleValue - scaleStep;
+    if (defaultScaleValue < scaleStep) {
+      defaultScaleValue = scaleStep;
     }
     scaleValue.setAttribute('value', defaultScaleValue + '%');
 
@@ -118,6 +150,7 @@
 
   // применение эффектов
   for (var b = 0; b < effectsBtns.length; b++) {
+
     effectsBtns[b].addEventListener('click', function (evt) {
       // обнуляем инпут при каждом выборе эффекта
       effectLevelInput.value = 0;
@@ -166,9 +199,9 @@
   }
 
   /*
-   * Функция изменения насыщенности эффекта
-   * @param x - позиция по оси x
-   */
+  * Функция изменения насыщенности эффекта
+  * @param x - позиция по оси x
+  */
   var changeIntensiveFilter = function (x) {
     var positionX = parseInt(x, 10); // переводим x в число
     // делаем пропорции для каждого эффекта
@@ -205,9 +238,9 @@
   };
 
   /*
-   * Фунция перемещения бегунка
-   * @param moveEvt - объект Event
-   */
+  * Фунция перемещения бегунка
+  * @param moveEvt - объект Event
+  */
   var onMouseMove = function (moveEvt) {
     moveEvt.preventDefault();
     // разница координат
@@ -233,8 +266,8 @@
   };
 
   /*
-   * Функция отжатия кнопки мыши
-   */
+  * Функция отжатия кнопки мыши
+  */
   var onMouseUp = function () {
     // удаляем все обработчики
     document.removeEventListener('mousemove', onMouseMove);
@@ -242,8 +275,8 @@
   };
 
   /*
-   * Функция нажатия кнопки мыши
-   */
+  * Функция нажатия кнопки мыши
+  */
   var onMouseDown = function (downEvt) {
     downEvt.preventDefault();
     startCoordX = downEvt.clientX;
@@ -254,9 +287,9 @@
   effectBlock.addEventListener('mousedown', onMouseDown);
 
   /*
-   * Метод проверки уникальности значений в массиве.
-   * @param {array} arr  Исходный массив.
-   */
+  * Метод проверки уникальности значений в массиве.
+  * @param {array} arr  Исходный массив.
+  */
   var isArrayUnique = function (arr) {
 
     var myArray = arr.sort();
@@ -274,7 +307,7 @@
   * Методы проверки количества символов
   *
   * @param element - элемент массива
-  * */
+  */
   var checkArrayItemMinLength = function (element) {
     return element.length > MIN_HASHTAG_LENGTH;
   };
@@ -379,16 +412,17 @@
   });
 
   /*
-   * Функция закрытия успеха, нажатием на кнопку ESC
-   * @param evt - Объект Event
-   */
+  * Функция закрытия успеха, нажатием на кнопку ESC
+  *
+  * @param evt - Объект Event
+  */
   var onUploadSuccessEscPress = function (evt) {
     window.util.isEscEvent(evt, closeUploadSuccess);
   };
 
   /*
-   * Функция закрытия окна успешной отправки
-   */
+  * Функция закрытия окна успешной отправки
+  */
   var closeUploadSuccess = function () {
     successTemplate.remove();
     document.removeEventListener('keydown', onUploadSuccessEscPress);
@@ -402,16 +436,17 @@
   });
 
   /*
-   * Функция закрытия ошибки, нажатием на кнопку ESC
-   * @param evt - Объект Event
-   */
+  * Функция закрытия ошибки, нажатием на кнопку ESC
+  *
+  * @param evt - Объект Event
+  */
   var onUploadErrorEscPress = function (evt) {
     window.util.isEscEvent(evt, closeUploadError);
   };
 
   /*
-   * Функция закрытия окна ошибки
-   */
+  * Функция закрытия окна ошибки
+  */
   var closeUploadError = function () {
     window.util.errorTemplate.remove();
     document.removeEventListener('keydown', onUploadErrorEscPress);

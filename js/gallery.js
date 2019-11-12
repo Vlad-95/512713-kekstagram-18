@@ -1,17 +1,23 @@
 'use strict';
 
 (function () {
+
+  var photosTemplate = document.querySelector('#picture').content.querySelector('.picture'); // обращаемся к шаблону фотографий
+  var filtersBtnsBlock = document.querySelector('.img-filters'); // блок с кнопками фильтрации
+  var filterBtns = document.querySelectorAll('.img-filters__button'); // кнопки фильтрации
+
   /*
-   * Функция нажатия на кнопку ESC
-   * @param evt - Объект Event
-   */
+  * Функция нажатия на кнопку ESC
+  *
+  * @param evt - Объект Event
+  */
   var onGalleryErrorEscPress = function (evt) {
     window.util.isEscEvent(evt, closeGalleryError);
   };
 
   /*
-   * Функция закрытия окна ошибки
-   */
+  * Функция закрытия окна ошибки
+  */
   var closeGalleryError = function () {
     window.util.errorTemplate.remove();
     document.removeEventListener('keydown', onGalleryErrorEscPress);
@@ -24,16 +30,13 @@
     }
   });
 
-  // обращаемся к шаблону фотографий
-  var photosTemplate = document.querySelector('#picture').content.querySelector('.picture');
-
   /*
-   * Функция возврщает сгенерированное фото
-   *
-   * @param photo - фото
-   *
-   * @return photoElement - сгенерированное фото
-   */
+  * Функция возврщает сгенерированное фото
+  *
+  * @param photo - фото
+  *
+  * @return photoElement - сгенерированное фото
+  */
   var renderPhoto = function (photo) {
     var photoElement = photosTemplate.cloneNode(true);
 
@@ -89,10 +92,6 @@
 
   window.load(successLoadHandler, errorLoadHandler);
 
-  // ФИЛЬТРАЦИЯ ИЗОБРАЖЕНИЙ
-  var filtersBtnsBlock = document.querySelector('.img-filters');
-  var filterBtns = document.querySelectorAll('.img-filters__button');
-
   // очистка галлереи
   var cleanGallery = function () {
     var galleryItems = window.util.photosBlock.children;
@@ -104,6 +103,9 @@
     }
   };
 
+  /*
+  * Функция клика по кнопкам фильтрации
+  */
   var clickFilterBtns = function (evt) {
     var target = evt.target;
 
@@ -120,10 +122,13 @@
     // получаем id кнопки
     var btnsId = target.getAttribute('id');
 
+    // проверка условий на содержание id соответствующей кнопки
     switch (btnsId) {
       case 'filter-popular':
         cleanGallery();
-        window.timer.debounce(window.renderGallery(window.util.picturesArr, 25));
+
+        window.renderGallery(window.util.picturesArr, 25);
+
         break;
 
       case 'filter-random':
@@ -131,10 +136,11 @@
 
         // Копирование массива изображений
         var randomPictureArr = window.util.picturesArr.slice();
-
+        // Перемешиваем массив
         window.util.shuffleArr(randomPictureArr);
         // показываем перемешанные фотки
-        window.timer.debounce(window.renderGallery(randomPictureArr, 10));
+        window.renderGallery(randomPictureArr, 10);
+
         break;
 
       case 'filter-discussed':
@@ -142,16 +148,16 @@
 
         // Копирование массива изображений
         var discussedPictureArr = window.util.picturesArr.slice();
-
         // сортируем массив по убыванию количеству комментариев
         discussedPictureArr.sort(function (a, b) {
           return b.comments.length - a.comments.length;
         });
         // показываем отсортированные фотки
-        window.timer.debounce(window.renderGallery(discussedPictureArr, 25));
+        window.renderGallery(discussedPictureArr, 25);
 
         break;
     }
   };
-  filtersBtnsBlock.addEventListener('click', clickFilterBtns);
+
+  filtersBtnsBlock.addEventListener('click', window.timer.debounce(clickFilterBtns));
 })();

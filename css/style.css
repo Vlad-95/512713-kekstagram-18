@@ -1403,7 +1403,7 @@ main {
 }
 
 
-input:invalid {
+.text__hashtags:invalid, .text__description:invalid  {
   border-color: red;
 }
 

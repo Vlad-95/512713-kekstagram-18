@@ -1,22 +1,27 @@
 'use strict';
 
 (function () {
-  var COMMENT_QOUNT = 5;
-  var bigPic = document.querySelector('.big-picture');
-  var bigPicClose = document.querySelector('.big-picture__cancel');
+  var COMMENT_QOUNT = 5; // количество выводимых комментов
+  var bigPic = document.querySelector('.big-picture'); // блок с превью
+  var bigPicClose = document.querySelector('.big-picture__cancel'); // кнопка закрытия превью
+  var bigPicComments = document.querySelector('.big-picture .social__comments'); // Обращаемся к блоку с комментариями
+  var bigPicCommentTemplate = document.querySelector('.big-picture .social__comment'); // Обращаемся к шаблону комментария
+  var bigPicCommentLoad = document.querySelector('.comments-loader'); // Обращаемся к кнопке подгрузки комментариев
+  var fragmentComment = document.createDocumentFragment(); // создаем фрагмент для комментария
 
   /*
-   * Функция нажатия на кнопку ESC
-   * @param evt - Объект Event
-   */
+  * Функция нажатия на кнопку ESC
+  *
+  * @param evt - Объект Event
+  */
   var onPreviewEscPress = function (evt) {
-    // проверка на клавишу esc и фокус в инпуте хэштегов
+
     window.util.isEscEvent(evt, closePreviewPopup);
   };
 
   /*
-   * Функция открытия окна просмотра фото
-   */
+  * Функция открытия окна просмотра фото
+  */
   var openPreviewPopup = function () {
     bigPic.classList.remove('hidden');
 
@@ -24,38 +29,31 @@
   };
 
   /*
-   * Функция закрытия окна просмотра фото
-   */
+  * Функция закрытия окна просмотра фото
+  */
   var closePreviewPopup = function () {
     bigPic.classList.add('hidden');
-    COMMENT_QOUNT = 5;
+
     document.removeEventListener('keydown', onPreviewEscPress);
   };
 
-  // закрытие окна просмотра
+  // закрытие окна превью
   bigPicClose.addEventListener('click', function () {
     closePreviewPopup();
   });
 
-  // закрытие окна просмотра по клаве
+  // закрытие окна превью по клаве
   bigPicClose.addEventListener('keydown', function (evt) {
     window.util.isEnterEvent(evt, closePreviewPopup);
   });
 
-  // Обращаемся к блоку с комментариями
-  var bigPicComments = document.querySelector('.big-picture .social__comments');
-  // Обращаемся к шаблону комментария
-  var bigPicCommentTemplate = document.querySelector('.big-picture .social__comment');
-  // Обращаемся к кнопке подгрузки комментариев
-  var bigPicCommentLoad = document.querySelector('.comments-loader');
-
   /*
-   * Функция возврщает сгенерированный комментарий
-   *
-   * @param comment - комментарий
-   *
-   * @return commentElement - генерированный комментарий
-   */
+  * Функция возврщает сгенерированный комментарий
+  *
+  * @param comment - комментарий
+  *
+  * @return commentElement - генерированный комментарий
+  */
   var renderComments = function (comment) {
     var commentElement = bigPicCommentTemplate.cloneNode(true);
 
@@ -71,9 +69,14 @@
   */
   var clickHandler = function (evt) {
     openPreviewPopup();
+
+    // возвращаем исходное значение количества выводимых комментов
+    COMMENT_QOUNT = 5;
     var clickedElement = evt.target;
-    var commentVisible = 5;
     var index = clickedElement.parentNode.getAttribute('data-index');
+
+    // устанавливаем аттрибут на превью, содержащий индекс
+    bigPic.querySelector('.big-picture__preview').setAttribute('data-index', index);
 
     if (clickedElement.classList.contains('picture__img')) {
       // Устанавливаем атрибут src
@@ -83,10 +86,8 @@
       // Выводим описание фотографии
       document.querySelector('.big-picture .social__caption').textContent = window.util.picturesArr[index]['description'];
 
-      var fragmentComment = document.createDocumentFragment();
-
       // в фрагмент записываем 5 сгенерированных комментариев
-      for (var a = 0; a < commentVisible; a++) {
+      for (var a = 0; a < COMMENT_QOUNT; a++) {
         fragmentComment.appendChild(renderComments(window.util.picturesArr[index]['comments'][a]));
       }
 
@@ -100,21 +101,6 @@
         bigPicCommentLoad.classList.remove('visually-hidden');
       }
 
-      bigPicCommentLoad.addEventListener('click', function () {
-        var commentStep = 5;
-
-        for (var b = commentVisible; b < commentVisible + commentStep; b++) {
-
-          if (window.util.picturesArr[index]['comments'].length > commentVisible) {
-            fragmentComment.appendChild(renderComments(window.util.picturesArr[index]['comments'][b]));
-          }
-        }
-        commentVisible += commentStep;
-
-        bigPicComments.appendChild(fragmentComment);
-
-      });
-
     } else {
       bigPic.classList.add('hidden');
     }
@@ -122,4 +108,35 @@
 
   // ловим клик на всем блоке с картинками
   window.util.photosBlock.addEventListener('click', clickHandler);
+
+
+  /*
+  * Функция показа остальных комментариев по клику на кнопку
+  */
+  var commentLoadClickHandler = function () {
+
+    // получаем индекс картинки по которой кликнули
+    var index = bigPic.querySelector('.big-picture__preview').getAttribute('data-index');
+
+    // задаем шаг, показа комментариев
+    var commentStep = 5;
+
+    for (var b = COMMENT_QOUNT; b <= COMMENT_QOUNT + commentStep; b++) {
+
+      // проверяем существуют ли комментарии в массиве на каждой итерации
+      if (window.util.picturesArr[index]['comments'][b]) {
+        fragmentComment.appendChild(renderComments(window.util.picturesArr[index]['comments'][b]));
+        bigPicComments.appendChild(fragmentComment);
+      } else {
+        // прячем кнопку, если показаны все комментарии
+        bigPicCommentLoad.classList.add('visually-hidden');
+      }
+    }
+
+    // увеличиваем значение показаных комментов при каждом клике
+    COMMENT_QOUNT += commentStep;
+  };
+
+  // вешаем листенер на кнопку подгрузки комментариев
+  bigPicCommentLoad.addEventListener('click', commentLoadClickHandler);
 })();

@@ -28,12 +28,12 @@ window.util = (function () {
       }
     },
     /*
-     * Функция перемешивания массива
-     *
-     * @param arr - исходный массив
-     *
-     * @return arr - перемешанный массив
-     */
+    * Функция перемешивания массива
+    *
+    * @param arr - исходный массив
+    *
+    * @return arr - перемешанный массив
+    */
     shuffleArr: function (arr) {
       for (var i = arr.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
