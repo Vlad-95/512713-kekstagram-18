@@ -13,6 +13,9 @@ window.util = (function () {
   var commentUploadInput = document.querySelector('.text__description');
   // Создаем пустой массив для всех картинок
   var picturesArr = [];
+  // обращаемся к шаблону Ошибки
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error');
+
   return {
     isEscEvent: function (evt, action) {
       if (evt.keyCode === ESC_KEYCODE && document.activeElement !== hashtagsInput && document.activeElement !== commentPreviewInput && document.activeElement !== commentUploadInput) {
@@ -25,12 +28,12 @@ window.util = (function () {
       }
     },
     /*
-     * Функция перемешивания массива
-     *
-     * @param arr - исходный массив
-     *
-     * @return arr - перемешанный массив
-     */
+    * Функция перемешивания массива
+    *
+    * @param arr - исходный массив
+    *
+    * @return arr - перемешанный массив
+    */
     shuffleArr: function (arr) {
       for (var i = arr.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -45,6 +48,7 @@ window.util = (function () {
     commentPreviewInput: commentPreviewInput,
     commentUploadInput: commentUploadInput,
     photosBlock: photosBlock,
-    picturesArr: picturesArr
+    picturesArr: picturesArr,
+    errorTemplate: errorTemplate
   };
 })();
