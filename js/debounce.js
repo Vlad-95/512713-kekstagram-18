@@ -6,6 +6,7 @@
   var DEBOUNCE_INTERVAL = 500;
 
   var debounce = function (callback) {
+
     var lastTimeout = null;
 
     return function () {
