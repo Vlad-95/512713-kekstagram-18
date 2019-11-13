@@ -14,7 +14,7 @@
   *
   * @param evt - Объект Event
   */
-  var onPreviewEscPress = function (evt) {
+  var previewEscPressHandler = function (evt) {
 
     window.util.isEscEvent(evt, closePreviewPopup);
   };
@@ -25,7 +25,7 @@
   var openPreviewPopup = function () {
     bigPic.classList.remove('hidden');
 
-    document.addEventListener('keydown', onPreviewEscPress);
+    document.addEventListener('keydown', previewEscPressHandler);
   };
 
   /*
@@ -34,7 +34,7 @@
   var closePreviewPopup = function () {
     bigPic.classList.add('hidden');
 
-    document.removeEventListener('keydown', onPreviewEscPress);
+    document.removeEventListener('keydown', previewEscPressHandler);
   };
 
   // закрытие окна превью
@@ -52,16 +52,16 @@
   *
   * @param comment - комментарий
   *
-  * @return commentElement - генерированный комментарий
+  * @return commentItem - генерированный комментарий
   */
   var renderComments = function (comment) {
-    var commentElement = bigPicCommentTemplate.cloneNode(true);
+    var commentItem = bigPicCommentTemplate.cloneNode(true);
 
-    commentElement.querySelector('.social__picture').setAttribute('src', comment['avatar']);
-    commentElement.querySelector('.social__picture').setAttribute('alt', comment['name']);
-    commentElement.querySelector('.social__text').textContent = comment['message'];
+    commentItem.querySelector('.social__picture').setAttribute('src', comment['avatar']);
+    commentItem.querySelector('.social__picture').setAttribute('alt', comment['name']);
+    commentItem.querySelector('.social__text').textContent = comment['message'];
 
-    return commentElement;
+    return commentItem;
   };
 
   /*
@@ -72,15 +72,15 @@
 
     // возвращаем исходное значение количества выводимых комментов
     COMMENT_QOUNT = 5;
-    var clickedElement = evt.target;
-    var index = clickedElement.parentNode.getAttribute('data-index');
+    var clickedItem = evt.target;
+    var index = clickedItem.parentNode.getAttribute('data-index');
 
     // устанавливаем аттрибут на превью, содержащий индекс
     bigPic.querySelector('.big-picture__preview').setAttribute('data-index', index);
 
-    if (clickedElement.classList.contains('picture__img')) {
+    if (clickedItem.classList.contains('picture__img')) {
       // Устанавливаем атрибут src
-      document.querySelector('.big-picture__img img').setAttribute('src', clickedElement.src);
+      document.querySelector('.big-picture__img img').setAttribute('src', clickedItem.src);
       // Выводим количество лайков
       document.querySelector('.big-picture .likes-count').textContent = window.util.picturesArr[index]['likes'];
       // Выводим описание фотографии

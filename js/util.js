@@ -3,14 +3,9 @@
 window.util = (function () {
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
+
   // обращаемся к блоку с картинками
   var photosBlock = document.querySelector('.pictures');
-  // Обращаемся к инпуту с хэштегами
-  var hashtagsInput = document.querySelector('.text__hashtags');
-  // Обращаемся к инпуту с комментариями (ФОТО ПОЛЬЗОВАТЕЛЕЙ)
-  var commentPreviewInput = document.querySelector('.social__footer-text');
-  // Обращаемся к инпуту с с комментариями (ЗАГРУЗКА ФОТО)
-  var commentUploadInput = document.querySelector('.text__description');
   // Создаем пустой массив для всех картинок
   var picturesArr = [];
   // обращаемся к шаблону Ошибки
@@ -44,9 +39,6 @@ window.util = (function () {
       return arr;
     },
 
-    hashtagsInput: hashtagsInput,
-    commentPreviewInput: commentPreviewInput,
-    commentUploadInput: commentUploadInput,
     photosBlock: photosBlock,
     picturesArr: picturesArr,
     errorTemplate: errorTemplate

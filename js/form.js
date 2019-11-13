@@ -1,6 +1,13 @@
 'use strict';
 
 (function () {
+  var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
+  var MAX_HASHTAG_LENGTH = 20; // с учетом учета #
+  var MIN_HASHTAG_LENGTH = 2; // с учетом учета #
+  var COMMENT_LENGTH = 140; // Лимит символов в комментарии
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png']; // формат загруженых файлов
+
+
   // окно редактирования/загрузки
   var uploadBlockPic = document.querySelector('.img-upload__overlay'); // блок редактирования картинки
   var uploadPicInput = document.querySelector('#upload-file'); // инпут загрузки файлов
@@ -17,20 +24,19 @@
   var effectLevelInput = document.querySelector('.effect-level__value'); // скрытый инпут, в котором отправляется значение
   var effectBlock = document.querySelector('.img-upload__effect-level'); // родительский блок изменения насыщенности
   var effectLine = document.querySelector('.effect-level__line'); // линия насыщенности эффекта
+  var effectLineWidth = 453;
   var effectPin = document.querySelector('.effect-level__pin'); // бегунок насыщенности
   var effectDepth = document.querySelector('.effect-level__depth'); // уровень насыщенности (линия до бегунка)
   var effectsBtns = document.querySelectorAll('.effects__radio'); // эффекты
   var effectsPreview = document.querySelectorAll('.effects__preview'); // превьюшки эффектов
 
   // хэштеги
-  var LIMIT_HASHTAGS = 5; // Лимит хештегов для загруженного фото.
-  var MAX_HASHTAG_LENGTH = 20; // с учетом учета #
-  var MIN_HASHTAG_LENGTH = 2; // с учетом учета #
+  var hashtagsInput = document.querySelector('.text__hashtags'); // Обращаемся к инпуту с хэштегами
   var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
   var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
 
-  // длин комментария комментарии
-  var COMMENT_LENGTH = 140; // Лимит символов в комментарии
+  // комментарии
+  var commentUploadInput = document.querySelector('.text__description'); // Обращаемся к инпуту с комментариями
 
   // обращаемся к форме отправки фотографий
   var uploadForm = document.querySelector('.img-upload__form');
@@ -62,8 +68,6 @@
     effectLevelInput.value = 0;
 
     // показываем загруженную фотку
-    var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png']; // формат загруженых файлов
-
     var file = uploadPicInput.files[0];
     var fileName = file.name.toLowerCase();
 
@@ -153,12 +157,12 @@
 
     effectsBtns[b].addEventListener('click', function (evt) {
       // обнуляем инпут при каждом выборе эффекта
-      effectLevelInput.value = 0;
+      effectLevelInput.value = 100;
       // получаем id элемента, по которому кликнули
       var effectBtnId = evt.target.getAttribute('id');
       // возвращаем бегунок в начальное положение
-      effectPin.style.left = 0 + 'px';
-      effectDepth.style.width = 0 + 'px';
+      effectPin.style.left = effectLineWidth + 'px';
+      effectDepth.style.width = effectLineWidth + 'px';
       // при каждом клике удаляем все классы наа изображении
       previewPic.removeAttribute('class');
 
@@ -170,31 +174,27 @@
           break;
         case 'effect-chrome':
           previewPic.classList.add('effects__preview--chrome');
-          previewPic.style.webkitFilter = 'grayscale(0)';
+          previewPic.style.webkitFilter = 'grayscale(1)';
           break;
         case 'effect-sepia':
           previewPic.classList.add('effects__preview--sepia');
-          previewPic.style.webkitFilter = 'sepia(0)';
+          previewPic.style.webkitFilter = 'sepia(1)';
           break;
         case 'effect-marvin':
           previewPic.classList.add('effects__preview--marvin');
-          previewPic.style.webkitFilter = 'invert(0)';
+          previewPic.style.webkitFilter = 'invert(100%)';
           break;
         case 'effect-phobos':
           previewPic.classList.add('effects__preview--phobos');
-          previewPic.style.webkitFilter = 'blur(0)';
+          previewPic.style.webkitFilter = 'blur(4.53px)';
           break;
         case 'effect-heat':
           previewPic.classList.add('effects__preview--heat');
-          previewPic.style.webkitFilter = 'brightness(1)';
+          previewPic.style.webkitFilter = 'brightness(4.53)';
       }
 
       // удаляем линию насыщенности, если кликнули на "ОРИГИНАЛ"
-      if (previewPic.classList.contains('effect-none')) {
-        effectBlock.style.display = 'none';
-      } else {
-        effectBlock.style.display = 'block';
-      }
+      previewPic.classList.contains('effect-none') ? effectBlock.style.display = 'none' : effectBlock.style.display = 'block';
     });
   }
 
@@ -313,7 +313,7 @@
   };
 
   var checkArrayItemMaxLength = function (element) {
-    return element.length < MAX_HASHTAG_LENGTH;
+    return element.length <= MAX_HASHTAG_LENGTH;
   };
 
   /*
@@ -357,14 +357,22 @@
     return comment.value.length < COMMENT_LENGTH;
   };
 
+
   // Вешаем listener на ввод
-  window.util.hashtagsInput.addEventListener('input', function (evt) {
+  hashtagsInput.addEventListener('input', function (evt) {
     var target = evt.target;
 
     target.setCustomValidity(''); // После каждого редактирования сбрасываем ошибку, считая что она исправлена, и выполняем проверку по новой.
 
+
+
     // создаем массив разделяя элементы по пробелу
     var arrHashtags = target.value.toLowerCase().split(regExpSpace);
+
+    // обнуляем массив, если поле пустое
+    if (target.value.length === 0) {
+      arrHashtags = [];
+    }
 
     // Проверка дубликатов
     if (isArrayUnique(arrHashtags)) {
@@ -378,7 +386,7 @@
 
     // Проверка на максимальное количество
     if (!arrHashtags.every(checkArrayItemMaxLength)) {
-      target.setCustomValidity('Минимальное количество символов хэштега менее ' + MAX_HASHTAG_LENGTH);
+      target.setCustomValidity('Максимальное количество символов хэштега менее ' + MAX_HASHTAG_LENGTH);
     }
 
     // Проверка на обязательный символ #
@@ -400,11 +408,11 @@
   });
 
   // Вешаем listener на изменение инпута с комментариями
-  window.util.commentUploadInput.addEventListener('input', function (evt) {
+  commentUploadInput.addEventListener('input', function (evt) {
     var target = evt.target;
 
     // Проверка на максимальную длину комментария
-    if (!checkCommentLength(window.util.commentUploadInput)) {
+    if (!checkCommentLength(commentUploadInput)) {
       target.setCustomValidity('Максимальная длина комментария ' + COMMENT_LENGTH);
     }
 
@@ -489,7 +497,7 @@
 
   // обработчик на отправку формы
   uploadForm.addEventListener('submit', function (evt) {
-    window.upload(new FormData(uploadForm), successUploadHandler, errorUploadHandler);
+    window.upload.uploadFunc(new FormData(uploadForm), successUploadHandler, errorUploadHandler);
     evt.preventDefault();
   });
 })();

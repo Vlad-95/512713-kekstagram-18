@@ -11,7 +11,7 @@
   *
   * @param evt - Объект Event
   */
-  var onGalleryErrorEscPress = function (evt) {
+  var galleryErrorEscPressHandler = function (evt) {
     window.util.isEscEvent(evt, closeGalleryError);
   };
 
@@ -20,7 +20,7 @@
   */
   var closeGalleryError = function () {
     window.util.errorTemplate.remove();
-    document.removeEventListener('keydown', onGalleryErrorEscPress);
+    document.removeEventListener('keydown', galleryErrorEscPressHandler);
   };
 
   // закрытие окна ошибки
@@ -35,19 +35,19 @@
   *
   * @param photo - фото
   *
-  * @return photoElement - сгенерированное фото
+  * @return photoItem - сгенерированное фото
   */
   var renderPhoto = function (photo) {
-    var photoElement = photosTemplate.cloneNode(true);
+    var photoItem = photosTemplate.cloneNode(true);
 
-    photoElement.querySelector('.picture__img').setAttribute('src', photo['url']);
+    photoItem.querySelector('.picture__img').setAttribute('src', photo['url']);
 
-    photoElement.querySelector('.picture__likes').textContent = photo['likes'];
-    photoElement.querySelector('.picture__comments').textContent = photo['comments'].length;
+    photoItem.querySelector('.picture__likes').textContent = photo['likes'];
+    photoItem.querySelector('.picture__comments').textContent = photo['comments'].length;
 
-    photoElement.setAttribute('data-index', photo['index']);
+    photoItem.setAttribute('data-index', photo['index']);
 
-    return photoElement;
+    return photoItem;
   };
 
   /*
@@ -56,7 +56,7 @@
   * @param data - массив данных
   * @param quantity - количество выводимых фотографий
   */
-  window.renderGallery = function (data, quantity) {
+  var renderGallery = function (data, quantity) {
     // в фрагмент записываем все сгенерированные фото
     for (var k = 0; k < quantity; k++) {
       window.util.picturesArr[k]['index'] = k;
@@ -76,7 +76,7 @@
       window.util.picturesArr[c]['index'] = c;
     }
 
-    window.renderGallery(window.util.picturesArr, 25);
+    renderGallery(window.util.picturesArr, 25);
 
     // показываем кнопки фильтрации
     document.querySelector('.img-filters').classList.remove('img-filters--inactive');
@@ -90,7 +90,7 @@
     document.addEventListener('keydown', onGalleryErrorEscPress);
   };
 
-  window.load(successLoadHandler, errorLoadHandler);
+  window.load.loadFunc(successLoadHandler, errorLoadHandler);
 
   // очистка галлереи
   var cleanGallery = function () {
@@ -127,7 +127,7 @@
       case 'filter-popular':
         cleanGallery();
 
-        window.renderGallery(window.util.picturesArr, 25);
+        renderGallery(window.util.picturesArr, 25);
 
         break;
 
@@ -139,7 +139,7 @@
         // Перемешиваем массив
         window.util.shuffleArr(randomPictureArr);
         // показываем перемешанные фотки
-        window.renderGallery(randomPictureArr, 10);
+        renderGallery(randomPictureArr, 10);
 
         break;
 
@@ -153,7 +153,7 @@
           return b.comments.length - a.comments.length;
         });
         // показываем отсортированные фотки
-        window.renderGallery(discussedPictureArr, 25);
+        renderGallery(discussedPictureArr, 25);
 
         break;
     }
