@@ -87,7 +87,7 @@
   */
   var errorLoadHandler = function () {
     document.querySelector('main').insertAdjacentElement('afterbegin', window.util.errorTemplate);
-    document.addEventListener('keydown', onGalleryErrorEscPress);
+    document.addEventListener('keydown', galleryErrorEscPressHandler);
   };
 
   window.load.loadFunc(successLoadHandler, errorLoadHandler);

@@ -33,5 +33,5 @@
 
   window.load = {
     loadFunc: loadFunc
-  }
+  };
 })();

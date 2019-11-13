@@ -33,5 +33,5 @@
 
   window.upload = {
     uploadFunc: uploadFunc
-  }
+  };
 })();

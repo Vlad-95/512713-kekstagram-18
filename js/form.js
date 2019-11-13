@@ -31,12 +31,8 @@
   var effectsPreview = document.querySelectorAll('.effects__preview'); // превьюшки эффектов
 
   // хэштеги
-  var hashtagsInput = document.querySelector('.text__hashtags'); // Обращаемся к инпуту с хэштегами
   var regExpEmptySpace = /[а-яА-Яa-zA-Z0-9]+\#[^\s]/g; // регулярка на остутствие пробела;
   var regExpSpace = (/[\s]+/); // регулярка на содержание пробела для создания массива
-
-  // комментарии
-  var commentUploadInput = document.querySelector('.text__description'); // Обращаемся к инпуту с комментариями
 
   // обращаемся к форме отправки фотографий
   var uploadForm = document.querySelector('.img-upload__form');
@@ -194,7 +190,7 @@
       }
 
       // удаляем линию насыщенности, если кликнули на "ОРИГИНАЛ"
-      previewPic.classList.contains('effect-none') ? effectBlock.style.display = 'none' : effectBlock.style.display = 'block';
+      effectBlock.style.display = previewPic.classList.contains('effect-none') ? 'none' : 'block';
     });
   }
 
@@ -359,12 +355,10 @@
 
 
   // Вешаем listener на ввод
-  hashtagsInput.addEventListener('input', function (evt) {
+  window.util.hashtagsInput.addEventListener('input', function (evt) {
     var target = evt.target;
 
     target.setCustomValidity(''); // После каждого редактирования сбрасываем ошибку, считая что она исправлена, и выполняем проверку по новой.
-
-
 
     // создаем массив разделяя элементы по пробелу
     var arrHashtags = target.value.toLowerCase().split(regExpSpace);
@@ -408,11 +402,11 @@
   });
 
   // Вешаем listener на изменение инпута с комментариями
-  commentUploadInput.addEventListener('input', function (evt) {
+  window.util.commentUploadInput.addEventListener('input', function (evt) {
     var target = evt.target;
 
     // Проверка на максимальную длину комментария
-    if (!checkCommentLength(commentUploadInput)) {
+    if (!checkCommentLength(window.util.commentUploadInput)) {
       target.setCustomValidity('Максимальная длина комментария ' + COMMENT_LENGTH);
     }
 
