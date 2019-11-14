@@ -56,6 +56,6 @@
     isEscEvent: isEscEvent,
     isEnterEvent: isEnterEvent,
     shuffleArr: shuffleArr
-  }
+  };
 
 })();
