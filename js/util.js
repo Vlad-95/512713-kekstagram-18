@@ -1,6 +1,6 @@
 'use strict';
 
-window.util = (function () {
+(function () {
   var ESC_KEYCODE = 27;
   var ENTER_KEYCODE = 13;
 
@@ -17,39 +17,45 @@ window.util = (function () {
   // обращаемся к шаблону Ошибки
   var errorTemplate = document.querySelector('#error').content.querySelector('.error');
 
-  return {
-    isEscEvent: function (evt, action) {
-      if (evt.keyCode === ESC_KEYCODE && document.activeElement !== hashtagsInput && document.activeElement !== commentPreviewInput && document.activeElement !== commentUploadInput) {
-        action();
-      }
-    },
-    isEnterEvent: function (evt, action) {
-      if (evt.keyCode === ENTER_KEYCODE) {
-        action();
-      }
-    },
-    /*
-    * Функция перемешивания массива
-    *
-    * @param arr - исходный массив
-    *
-    * @return arr - перемешанный массив
-    */
-    shuffleArr: function (arr) {
-      for (var i = arr.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-      }
-      return arr;
-    },
+  var isEscEvent = function (evt, action) {
+    if (evt.keyCode === ESC_KEYCODE && document.activeElement !== hashtagsInput && document.activeElement !== commentPreviewInput && document.activeElement !== commentUploadInput) {
+      action();
+    }
+  };
 
+  var isEnterEvent = function (evt, action) {
+    if (evt.keyCode === ENTER_KEYCODE) {
+      action();
+    }
+  };
+
+  /*
+  * Функция перемешивания массива
+  *
+  * @param arr - исходный массив
+  *
+  * @return arr - перемешанный массив
+  */
+  var shuffleArr = function (arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = temp;
+    }
+    return arr;
+  };
+
+  window.util = {
     hashtagsInput: hashtagsInput,
     commentPreviewInput: commentPreviewInput,
     commentUploadInput: commentUploadInput,
     photosBlock: photosBlock,
     picturesArr: picturesArr,
-    errorTemplate: errorTemplate
-  };
+    errorTemplate: errorTemplate,
+    isEscEvent: isEscEvent,
+    isEnterEvent: isEnterEvent,
+    shuffleArr: shuffleArr
+  }
+
 })();
